@@ -5,7 +5,7 @@ RSpec.describe WttjMetrics::Presenters::FlowMetricPresenter do
 
   # Setup
   let(:metric) { { metric: metric_name, value: metric_value } }
-  let(:metric_name) { 'avg_cycle_time_days' }
+  let(:metric_name) { 'median_cycle_time_days' }
   let(:metric_value) { 5.7 }
 
   it_behaves_like 'a presenter'
@@ -15,21 +15,21 @@ RSpec.describe WttjMetrics::Presenters::FlowMetricPresenter do
 
     context 'with cycle time metric' do
       # Setup
-      let(:metric_name) { 'avg_cycle_time_days' }
+      let(:metric_name) { 'median_cycle_time_days' }
 
       it 'formats correctly' do
         # Exercise & Verify
-        expect(label).to eq('Avg cycle time')
+        expect(label).to eq('Median cycle time')
       end
     end
 
     context 'with lead time metric' do
       # Setup
-      let(:metric_name) { 'avg_lead_time_days' }
+      let(:metric_name) { 'median_lead_time_days' }
 
       it 'formats correctly' do
         # Exercise & Verify
-        expect(label).to eq('Avg lead time')
+        expect(label).to eq('Median lead time')
       end
     end
 
@@ -59,7 +59,7 @@ RSpec.describe WttjMetrics::Presenters::FlowMetricPresenter do
 
     context 'with time metrics' do
       # Setup
-      let(:metric_name) { 'avg_cycle_time_days' }
+      let(:metric_name) { 'median_cycle_time_days' }
 
       it 'returns days' do
         # Exercise & Verify
@@ -86,6 +86,14 @@ RSpec.describe WttjMetrics::Presenters::FlowMetricPresenter do
         expect(unit).to eq(' issues')
       end
     end
+
+    context 'with unknown metric' do
+      let(:metric_name) { 'unknown_metric' }
+
+      it 'returns empty string' do
+        expect(unit).to eq('')
+      end
+    end
   end
 
   describe '#tooltip' do
@@ -93,17 +101,17 @@ RSpec.describe WttjMetrics::Presenters::FlowMetricPresenter do
 
     context 'with cycle time metric' do
       # Setup
-      let(:metric_name) { 'avg_cycle_time_days' }
+      let(:metric_name) { 'median_cycle_time_days' }
 
       it 'returns descriptive tooltip' do
         # Exercise & Verify
-        expect(tooltip).to include('Average time from when work starts')
+        expect(tooltip).to include('Median time from when work starts')
       end
     end
 
     context 'with lead time metric' do
       # Setup
-      let(:metric_name) { 'avg_lead_time_days' }
+      let(:metric_name) { 'median_lead_time_days' }
 
       it 'returns descriptive tooltip' do
         # Exercise & Verify
@@ -126,12 +134,12 @@ RSpec.describe WttjMetrics::Presenters::FlowMetricPresenter do
     subject(:display_value) { presenter.display_value }
 
     # Setup
-    let(:metric_name) { 'avg_cycle_time_days' }
+    let(:metric_name) { 'median_cycle_time_days' }
     let(:metric_value) { 5.7 }
 
     it 'includes value and unit' do
       # Exercise & Verify
-      expect(display_value).to eq('5 days')
+      expect(display_value).to eq('5.7 days')
     end
   end
 end

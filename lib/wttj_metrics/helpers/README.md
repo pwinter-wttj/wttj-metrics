@@ -48,7 +48,7 @@ include WttjMetrics::Helpers::FormattingHelper
 pct = format_percentage(25, 100)  # => 25
 
 # Humanize names
-name = humanize_metric_name('avg_cycle_time') # => "Avg cycle time"
+name = humanize_metric_name('avg_cycle_time') # => "Median cycle time"
 ```
 
 ### Linear::IssueHelper

@@ -34,6 +34,7 @@
 # Project specific
 /.playwright-mcp/
 /report/*_report.html
+/report/report.html
 !/report/report.sample.html
 *.csv
 *.xlsx

@@ -106,18 +106,18 @@ module WttjMetrics
         def add_team_comparison_sheet
           @workbook.add_worksheet(name: 'Team Comparison') do |sheet|
             add_title_row(sheet, 'Team Comparison', columns: 6)
-            headers = ['Team', 'Cycles (with data)', 'Avg Velocity (pts)',
-                       'Avg Tickets/Cycle', 'Avg Completion Rate (%)', 'Avg Scope Change (%)']
+            headers = ['Team', 'Cycles (with data)', 'Median Velocity (pts)',
+                       'Median Tickets/Cycle', 'Median Completion Rate (%)', 'Median Scope Change (%)']
             sheet.add_row headers, style: @header_style
 
             @data[:team_stats].each do |team, stats|
               sheet.add_row [
                 team,
                 "#{stats[:cycles_with_data]}/#{stats[:total_cycles]}",
-                stats[:avg_velocity],
-                stats[:avg_tickets_per_cycle],
-                stats[:avg_completion_rate].round(1),
-                stats[:avg_scope_change].round(1)
+                stats[:median_velocity],
+                stats[:median_tickets_per_cycle],
+                stats[:median_completion_rate].round(1),
+                stats[:median_scope_change].round(1)
               ]
             end
 

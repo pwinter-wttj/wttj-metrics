@@ -5,11 +5,12 @@ module WttjMetrics
     module Github
       module Timeseries
         class CiMetrics
+          include Helpers::StatisticsHelper
+
           def initialize
             @count_ci_success = 0
-            @total_time_to_green = 0.0
-            @count_with_green = 0
             @pr_count = 0
+            @time_to_green = []
           end
 
           def record(pull_request)
@@ -21,7 +22,7 @@ module WttjMetrics
           def metrics
             {
               ci_success_rate: rate(@count_ci_success, @pr_count),
-              avg_time_to_green_hours: average(@total_time_to_green, @count_with_green, 3600.0)
+              median_time_to_green_hours: median_duration(@time_to_green, 3600.0)
             }
           end
 
@@ -50,8 +51,7 @@ module WttjMetrics
 
             committed_at = Time.parse(last_commit[:committedDate] || last_commit['committedDate'])
             suite_at = Time.parse(success_suite[:updatedAt] || success_suite['updatedAt'])
-            @total_time_to_green += (suite_at - committed_at)
-            @count_with_green += 1
+            @time_to_green << (suite_at - committed_at)
           end
 
           def fetch_last_commit(pull_request)
@@ -59,10 +59,10 @@ module WttjMetrics
               pull_request.dig('lastCommit', 'nodes')&.first&.dig('commit')
           end
 
-          def average(total, count, divisor = 1.0)
-            return 0.0 unless count&.positive?
+          def median_duration(values, divisor)
+            return 0.0 if values.empty?
 
-            (total.to_f / count / divisor).round(2)
+            (safe_median(values, precision: 2) / divisor).round(2)
           end
 
           def rate(numerator, denominator)

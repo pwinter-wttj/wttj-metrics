@@ -12,8 +12,8 @@ RSpec.describe WttjMetrics::Reports::Github::WeeklyAggregator do
       { date: '2024-01-08', metric: 'merged', value: 10 }, # Week 2
       { date: '2024-01-01', metric: 'open', value: 2 },
       { date: '2024-01-02', metric: 'open', value: 4 },
-      { date: '2024-01-01', metric: 'avg_time_to_merge_hours', value: 10 },
-      { date: '2024-01-02', metric: 'avg_time_to_merge_hours', value: 20 }
+      { date: '2024-01-01', metric: 'median_time_to_merge_hours', value: 10 },
+      { date: '2024-01-02', metric: 'median_time_to_merge_hours', value: 20 }
     ]
   end
 
@@ -43,12 +43,10 @@ RSpec.describe WttjMetrics::Reports::Github::WeeklyAggregator do
       expect(result[:datasets][:open]).to eq([4, 0])
     end
 
-    it 'calculates weighted average for time to merge' do
-      # Week 1:
-      # Day 1: 10 * 5 (merged) = 50
-      # Day 2: 20 * 3 (merged) = 60
-      # Total: 110 / 8 = 13.75
-      expect(result[:datasets][:avg_time_to_merge]).to eq([13.75, 0])
+    it 'calculates weighted median for time to merge' do
+      # Week 1 values (weighted by merged count):
+      # 10h (weight 5), 20h (weight 3) => weighted median is 10
+      expect(result[:datasets][:median_time_to_merge]).to eq([10.0, 0.0])
     end
 
     context 'with empty data' do
@@ -68,8 +66,8 @@ RSpec.describe WttjMetrics::Reports::Github::WeeklyAggregator do
       end
 
       it 'returns 0 for calculations with zero denominator' do
-        expect(result[:datasets][:avg_time_to_merge]).to eq([0]) # weight 0
-        expect(result[:datasets][:avg_time_to_first_review]).to eq([0]) # empty values
+        expect(result[:datasets][:median_time_to_merge]).to eq([0]) # weight 0
+        expect(result[:datasets][:median_time_to_first_review]).to eq([0]) # empty values
         expect(result[:datasets][:hotfix_rate]).to eq([0]) # denominator 0
         expect(result[:datasets][:merge_rate]).to eq([0]) # total_processed 0
         expect(result[:datasets][:ci_success_rate]).to eq([0]) # total_base 0

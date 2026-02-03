@@ -146,7 +146,7 @@
                 <th class="sortable has-tooltip" onclick="sortTable('bugStatsTable', 1)">Total Created<span class="th-tooltip">Total bugs ever created for this team</span></th>
                 <th class="sortable has-tooltip" onclick="sortTable('bugStatsTable', 2)">Closed<span class="th-tooltip">Bugs that have been resolved</span></th>
                 <th class="sortable has-tooltip" onclick="sortTable('bugStatsTable', 3)">Open<span class="th-tooltip">Bugs currently open</span></th>
-                <th class="sortable has-tooltip" onclick="sortTable('bugStatsTable', 4)">MTTR<span class="th-tooltip">Mean Time To Resolve (avg days to fix bugs)</span></th>
+                <th class="sortable has-tooltip" onclick="sortTable('bugStatsTable', 4)">MTTR<span class="th-tooltip">Median Time To Resolve (median days to fix bugs)</span></th>
                 <th class="sortable has-tooltip" onclick="sortTable('bugStatsTable', 5)">Resolution Rate<span class="th-tooltip">Percentage of bugs closed</span></th>
               </tr>
             </thead>
@@ -315,13 +315,13 @@
             <tr>
               <th>Team</th>
               <th class="has-tooltip">Cycles (with data)<span class="th-tooltip">Number of cycles with actual work data vs total cycles</span></th>
-              <th class="has-tooltip">Avg Velocity<span class="th-tooltip">Average story points completed per cycle</span></th>
-              <th class="has-tooltip">Avg Tickets/Cycle<span class="th-tooltip">Average number of tickets completed per cycle</span></th>
-              <th class="has-tooltip">Avg Assignees<span class="th-tooltip">Average number of team members working per cycle</span></th>
-              <th class="has-tooltip">Avg Tickets/Day<span class="th-tooltip">Average tickets completed per day during cycles</span></th>
-              <th class="has-tooltip">Avg Completion<span class="th-tooltip">Average percentage of planned work completed</span></th>
+              <th class="has-tooltip">Median Velocity<span class="th-tooltip">Median story points completed per cycle</span></th>
+              <th class="has-tooltip">Median Tickets/Cycle<span class="th-tooltip">Median number of tickets completed per cycle</span></th>
+              <th class="has-tooltip">Median Assignees<span class="th-tooltip">Median number of team members working per cycle</span></th>
+              <th class="has-tooltip">Median Tickets/Day<span class="th-tooltip">Median tickets completed per day during cycles</span></th>
+              <th class="has-tooltip">Median Completion<span class="th-tooltip">Median percentage of planned work completed</span></th>
               <th class="has-tooltip">Total Carryover<span class="th-tooltip">Total issues carried over from previous cycles</span></th>
-              <th class="has-tooltip">Avg Scope Change<span class="th-tooltip">Average change in sprint scope during cycles</span></th>
+              <th class="has-tooltip">Median Scope Change<span class="th-tooltip">Median change in sprint scope during cycles</span></th>
             </tr>
           </thead>
           <tbody>
@@ -329,16 +329,16 @@
             <tr>
               <td><strong><%= team %></strong></td>
               <td><%= stats[:cycles_with_data] %>/<%= stats[:total_cycles] %></td>
-              <td><%= stats[:avg_velocity] %> pts</td>
-              <td><%= stats[:avg_tickets_per_cycle] %></td>
-              <td><%= stats[:avg_assignees] %></td>
-              <td><%= stats[:avg_tickets_per_day] %></td>
+              <td><%= stats[:median_velocity] %> pts</td>
+              <td><%= stats[:median_tickets_per_cycle] %></td>
+              <td><%= stats[:median_assignees] %></td>
+              <td><%= stats[:median_tickets_per_day] %></td>
               <td>
-                <div class="progress-bar"><div class="progress-fill <%= stats[:avg_completion_rate] >= 80 ? 'completion-high' : stats[:avg_completion_rate] >= 50 ? 'completion-medium' : 'completion-low' %>" style="width: <%= stats[:avg_completion_rate] %>%"></div></div>
-                <small><%= stats[:avg_completion_rate] %>%</small>
+                <div class="progress-bar"><div class="progress-fill <%= stats[:median_completion_rate] >= 80 ? 'completion-high' : stats[:median_completion_rate] >= 50 ? 'completion-medium' : 'completion-low' %>" style="width: <%= stats[:median_completion_rate] %>%"></div></div>
+                <small><%= stats[:median_completion_rate] %>%</small>
               </td>
               <td><%= stats[:total_carryover] %></td>
-              <td class="<%= stats[:avg_scope_change] > 0 ? 'scope-increased' : stats[:avg_scope_change] < 0 ? 'scope-decreased' : 'scope-neutral' %>"><%= stats[:avg_scope_change] > 0 ? '+' : '' %><%= stats[:avg_scope_change] %>%</td>
+              <td class="<%= stats[:median_scope_change] > 0 ? 'scope-increased' : stats[:median_scope_change] < 0 ? 'scope-decreased' : 'scope-neutral' %>"><%= stats[:median_scope_change] > 0 ? '+' : '' %><%= stats[:median_scope_change] %>%</td>
             </tr>
 <% end %>
           </tbody>
@@ -406,7 +406,7 @@
               <th class="has-tooltip">Bugs<span class="th-tooltip">Bug issues in this cycle</span></th>
               <th class="has-tooltip">Assignees<span class="th-tooltip">Team members assigned</span></th>
               <th class="has-tooltip">Velocity<span class="th-tooltip">Story points completed</span></th>
-              <th class="has-tooltip">Tickets/Day<span class="th-tooltip">Average per day</span></th>
+              <th class="has-tooltip">Tickets/Day<span class="th-tooltip">Median per day</span></th>
               <th class="has-tooltip">Carryover<span class="th-tooltip">From previous cycles</span></th>
               <th class="has-tooltip">Scope Change<span class="th-tooltip">Change in sprint scope during cycle</span></th>
             </tr>
@@ -816,7 +816,7 @@
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: ctx => `${ctx.parsed.x.toFixed(1)} days avg MTTR`
+              label: ctx => `${ctx.parsed.x.toFixed(1)} days median MTTR`
             }
           }
         },
@@ -847,7 +847,7 @@
           legend: { display: false },
           tooltip: {
             callbacks: {
-              afterLabel: () => `Min: ${velocityData.stats.min} | Max: ${velocityData.stats.max} | Avg: ${velocityData.stats.avg}`
+              afterLabel: () => `Min: ${velocityData.stats.min} | Max: ${velocityData.stats.max} | Median: ${velocityData.stats.avg}`
             }
           },
           title: {
@@ -890,7 +890,7 @@
           },
           title: {
             display: true,
-            text: `Avg: ${completionData.stats.avg}% | ${completionData.stats.count} cycles`,
+            text: `Median: ${completionData.stats.avg}% | ${completionData.stats.count} cycles`,
             position: 'bottom',
             font: { size: 11, weight: 'normal' }
           }

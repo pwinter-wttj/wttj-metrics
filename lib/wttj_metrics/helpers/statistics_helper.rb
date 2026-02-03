@@ -2,7 +2,7 @@
 
 module WttjMetrics
   module Helpers
-    # Shared statistics calculations for percentiles and averages
+    # Shared statistics calculations for percentiles and summary statistics
     # Extracted to DRY up duplicate logic in percentile data builders
     module StatisticsHelper
       PERCENTILES = [50, 75, 90, 95].freeze
@@ -32,6 +32,21 @@ module WttjMetrics
         (values.sum / values.size).round(precision)
       end
 
+      def safe_median(values, precision: 2)
+        return 0 if values.empty?
+
+        sorted = values.sort
+        mid = sorted.length / 2
+
+        median = if sorted.length.odd?
+                   sorted[mid]
+                 else
+                   (sorted[mid - 1] + sorted[mid]) / 2.0
+                 end
+
+        median.round(precision)
+      end
+
       def calculate_percentage(numerator, denominator, precision: 1)
         return 0 if denominator.zero?
 
@@ -42,7 +57,7 @@ module WttjMetrics
         {
           min: values.min&.round(precision) || 0,
           max: values.max&.round(precision) || 0,
-          avg: safe_average(values, precision: precision),
+          avg: safe_median(values, precision: precision),
           count: values.size
         }
       end

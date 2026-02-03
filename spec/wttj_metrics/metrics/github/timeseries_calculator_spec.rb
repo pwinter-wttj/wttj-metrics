@@ -77,7 +77,7 @@ RSpec.describe WttjMetrics::Metrics::Github::TimeseriesCalculator do
   end
 
   describe '#to_rows' do
-    it 'calculates daily stats including avg_time_to_merge_hours, reviews and comments' do
+    it 'calculates daily stats including median_time_to_merge_hours, reviews and comments' do
       rows = calculator.to_rows
 
       # 2025-01-01
@@ -86,29 +86,29 @@ RSpec.describe WttjMetrics::Metrics::Github::TimeseriesCalculator do
       # Avg: 1.5 hours, 1.5 reviews, 2.0 comments, 75.0 additions, 15.0 deletions, 0.38h to first review
 
       day1_rows = rows.select { |r| r[0] == '2025-01-01' }
-      avg_time_row = day1_rows.find { |r| r[2] == 'avg_time_to_merge_hours' }
-      avg_reviews_row = day1_rows.find { |r| r[2] == 'avg_reviews_per_pr' }
-      avg_comments_row = day1_rows.find { |r| r[2] == 'avg_comments_per_pr' }
-      avg_additions_row = day1_rows.find { |r| r[2] == 'avg_additions_per_pr' }
-      avg_deletions_row = day1_rows.find { |r| r[2] == 'avg_deletions_per_pr' }
-      avg_time_first_review_row = day1_rows.find { |r| r[2] == 'avg_time_to_first_review_days' }
-      avg_time_to_green_row = day1_rows.find { |r| r[2] == 'avg_time_to_green_hours' }
+      median_time_row = day1_rows.find { |r| r[2] == 'median_time_to_merge_hours' }
+      median_reviews_row = day1_rows.find { |r| r[2] == 'median_reviews_per_pr' }
+      median_comments_row = day1_rows.find { |r| r[2] == 'median_comments_per_pr' }
+      median_additions_row = day1_rows.find { |r| r[2] == 'median_additions_per_pr' }
+      median_deletions_row = day1_rows.find { |r| r[2] == 'median_deletions_per_pr' }
+      median_time_first_review_row = day1_rows.find { |r| r[2] == 'median_time_to_first_review_days' }
+      median_time_to_green_row = day1_rows.find { |r| r[2] == 'median_time_to_green_hours' }
 
-      expect(avg_time_row).not_to be_nil
-      expect(avg_time_row[3]).to eq(1.5)
-      expect(avg_reviews_row[3]).to eq(1.5)
-      expect(avg_comments_row[3]).to eq(2.0)
-      expect(avg_additions_row[3]).to eq(75.0)
-      expect(avg_deletions_row[3]).to eq(15.0)
-      expect(avg_time_first_review_row[3]).to eq(0.02)
-      expect(avg_time_to_green_row[3]).to eq(0.25)
+      expect(median_time_row).not_to be_nil
+      expect(median_time_row[3]).to eq(1.5)
+      expect(median_reviews_row[3]).to eq(1.5)
+      expect(median_comments_row[3]).to eq(2.0)
+      expect(median_additions_row[3]).to eq(75.0)
+      expect(median_deletions_row[3]).to eq(15.0)
+      expect(median_time_first_review_row[3]).to eq(0.02)
+      expect(median_time_to_green_row[3]).to eq(0.25)
 
       # 2025-01-02
       day2_rows = rows.select { |r| r[0] == '2025-01-02' }
-      avg_time_row2 = day2_rows.find { |r| r[2] == 'avg_time_to_merge_hours' }
+      median_time_row2 = day2_rows.find { |r| r[2] == 'median_time_to_merge_hours' }
 
-      expect(avg_time_row2).not_to be_nil
-      expect(avg_time_row2[3]).to eq(0.0)
+      expect(median_time_row2).not_to be_nil
+      expect(median_time_row2[3]).to eq(0.0)
     end
   end
 end

@@ -35,7 +35,7 @@ RSpec.describe WttjMetrics::Helpers::FormattingHelper do
 
   describe '#humanize_metric_name' do
     it 'replaces underscores with spaces' do
-      expect(helper.humanize_metric_name('avg_cycle_time')).to eq('Avg cycle time')
+      expect(helper.humanize_metric_name('median_cycle_time')).to eq('Median cycle time')
     end
 
     it 'capitalizes the first letter' do

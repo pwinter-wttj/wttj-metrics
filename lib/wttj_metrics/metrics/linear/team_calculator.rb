@@ -13,7 +13,7 @@ module WttjMetrics
         def calculate
           {
             completion_rate: completion_rate,
-            avg_blocked_time_hours: avg_blocked_time
+            median_blocked_time_hours: median_blocked_time
           }
         end
 
@@ -50,15 +50,11 @@ module WttjMetrics
           @thirty_days_ago ||= (today - DAYS_IN_MONTH).to_datetime
         end
 
-        def avg_blocked_time
+        def median_blocked_time
           blocked_times = collect_blocked_times
           return 0 if blocked_times.empty?
 
-          calculate_average(blocked_times)
-        end
-
-        def calculate_average(values)
-          (values.sum / values.size).round(2)
+          safe_median(blocked_times, precision: 2)
         end
 
         def collect_blocked_times

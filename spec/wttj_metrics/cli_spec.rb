@@ -395,6 +395,43 @@ RSpec.describe WttjMetrics::CLI do
         cli.report('tmp/metrics.csv')
       end
     end
+
+    context 'with custom csv file containing multiple sources' do
+      let(:csv_file) { 'tmp/custom_metrics.csv' }
+
+      before do
+        FileUtils.mkdir_p('tmp')
+        File.write(
+          csv_file,
+          "date,category,metric,value\n" \
+          "2026-02-03,flow,median_cycle_time_days,3.1\n" \
+          "2026-02-03,github,median_time_to_merge_days,2.0\n"
+        )
+
+        allow(cli).to receive(:options).and_return({
+                                                     output: 'report/report.html',
+                                                     days: 90,
+                                                     teams: nil,
+                                                     all_teams: false,
+                                                     excel: false,
+                                                     excel_path: 'report/report.xlsx',
+                                                     sources: []
+                                                   })
+      end
+
+      it 'infers sources and runs report service for each', :aggregate_failures do
+        inferred_sources = []
+
+        expect(WttjMetrics::Services::ReportService).to receive(:new).twice do |_, opts, _|
+          inferred_sources << opts.source
+          report_service
+        end
+
+        cli.report(csv_file)
+
+        expect(inferred_sources.sort).to eq(%w[github linear])
+      end
+    end
   end
 end
 

@@ -34,7 +34,7 @@ RSpec.describe WttjMetrics::Services::MetricsCollector do
 
   let(:calculated_rows) do
     [
-      ['2024-01-01', 'flow', 'avg_cycle_time_days', '10.5'],
+      ['2024-01-01', 'flow', 'median_cycle_time_days', '10.5'],
       ['2024-01-01', 'issues', 'total_issues', '150']
     ]
   end
@@ -287,12 +287,17 @@ RSpec.describe WttjMetrics::Services::MetricsCollector do
 
       it 'logs warning and skips GitHub fetching' do
         collector.call
-        expect(logger).to have_received(:warn).with('⚠️  Skipping GitHub: GITHUB_TOKEN or GITHUB_ORG not set')
+        expect(logger).to have_received(:warn).with('⚠️  Skipping GitHub: GITHUB_ORG not set')
         expect(WttjMetrics::Services::Github::DataFetcher).not_to have_received(:new)
       end
     end
 
     context 'with GitHub source but missing token' do
+      let(:github_fetcher) { instance_double(WttjMetrics::Services::Github::DataFetcher, call: github_data) }
+      let(:github_calculator) { instance_double(WttjMetrics::Metrics::Github::Calculator, calculate_all: github_rows) }
+      let(:github_data) { { pull_requests: [{ title: 'PR 1' }], releases: [], teams: {} } }
+      let(:github_rows) { [%w[2024-01-01 github pr_velocity 5]] }
+
       let(:options) do
         double(
           'Options',
@@ -307,17 +312,21 @@ RSpec.describe WttjMetrics::Services::MetricsCollector do
       end
 
       before do
-        allow(WttjMetrics::Services::Github::DataFetcher).to receive(:new)
+        allow(WttjMetrics::Services::Github::DataFetcher).to receive(:new).with(anything, anything, anything,
+                                                                                anything).and_return(github_fetcher)
+        allow(WttjMetrics::Metrics::Github::Calculator).to receive(:new).and_return(github_calculator)
         allow(ENV).to receive(:[]).and_call_original
         allow(ENV).to receive(:[]).with('GITHUB_TOKEN').and_return(nil)
         allow(ENV).to receive(:fetch).with('GITHUB_ORG', nil).and_return('org')
         allow(logger).to receive(:warn)
       end
 
-      it 'logs warning and skips GitHub fetching' do
+      it 'logs warning and fetches GitHub data using cache-only mode' do
         collector.call
-        expect(logger).to have_received(:warn).with('⚠️  Skipping GitHub: GITHUB_TOKEN or GITHUB_ORG not set')
-        expect(WttjMetrics::Services::Github::DataFetcher).not_to have_received(:new)
+
+        expect(logger).to have_received(:warn).with('⚠️  GITHUB_TOKEN not set; using cache-only GitHub data')
+        expect(WttjMetrics::Services::Github::DataFetcher).to have_received(:new)
+        expect(github_fetcher).to have_received(:call)
       end
     end
 

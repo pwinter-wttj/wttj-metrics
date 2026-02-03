@@ -19,9 +19,9 @@ test.describe('Cycles Section', () => {
 
         // Verify key headers exist in the table
         await expect(headersRow).toContainText('Team');
-        await expect(headersRow).toContainText('Avg Velocity');
-        await expect(headersRow).toContainText('Avg Completion');
-        await expect(headersRow).toContainText('Avg Scope Change');
+        await expect(headersRow).toContainText('Median Velocity');
+        await expect(headersRow).toContainText('Median Completion');
+        await expect(headersRow).toContainText('Median Scope Change');
     });
 
     test('team comparison shows scope change values', async ({ page }) => {

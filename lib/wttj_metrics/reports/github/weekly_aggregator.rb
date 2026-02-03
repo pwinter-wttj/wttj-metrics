@@ -11,20 +11,20 @@ module WttjMetrics
           merged: ->(c) { c.sum('merged') },
           closed: ->(c) { c.sum('closed') },
           open: ->(c) { c.last_value('open') },
-          avg_time_to_merge: ->(c) { c.weighted_avg('avg_time_to_merge_hours', 'merged') },
-          avg_reviews: ->(c) { c.weighted_avg('avg_reviews_per_pr', 'created') },
-          avg_comments: ->(c) { c.weighted_avg('avg_comments_per_pr', 'created') },
-          avg_additions: ->(c) { c.weighted_avg('avg_additions_per_pr', 'created') },
-          avg_deletions: ->(c) { c.weighted_avg('avg_deletions_per_pr', 'created') },
-          avg_time_to_first_review: ->(c) { c.simple_avg('avg_time_to_first_review_days') },
+          median_time_to_merge: ->(c) { c.weighted_median('median_time_to_merge_hours', 'merged') },
+          median_reviews: ->(c) { c.weighted_median('median_reviews_per_pr', 'created') },
+          median_comments: ->(c) { c.weighted_median('median_comments_per_pr', 'created') },
+          median_additions: ->(c) { c.weighted_median('median_additions_per_pr', 'created') },
+          median_deletions: ->(c) { c.weighted_median('median_deletions_per_pr', 'created') },
+          median_time_to_first_review: ->(c) { c.simple_median('median_time_to_first_review_days') },
           merge_rate: lambda(&:merge_rate),
-          avg_time_to_approval: ->(c) { c.simple_avg('avg_time_to_approval_days') },
-          avg_rework_cycles: ->(c) { c.weighted_avg('avg_rework_cycles', 'created') },
+          median_time_to_approval: ->(c) { c.simple_median('median_time_to_approval_days') },
+          median_rework_cycles: ->(c) { c.weighted_median('median_rework_cycles', 'created') },
           unreviewed_pr_rate: ->(c) { c.rate_from_daily('unreviewed_pr_rate', 'created') },
           ci_success_rate: ->(c) { c.rate_from_daily('ci_success_rate', 'created') },
           deploy_frequency: ->(c) { c.sum('releases_count') },
           hotfix_rate: ->(c) { c.rate('hotfix_count', 'releases_count') },
-          time_to_green: ->(c) { c.simple_avg('avg_time_to_green_hours') }
+          time_to_green: ->(c) { c.simple_median('median_time_to_green_hours') }
         }.freeze
 
         def initialize(daily_data)
@@ -91,19 +91,25 @@ module WttjMetrics
             last_day_metrics.find { |m| m[:metric] == name }&.dig(:value) || 0
           end
 
-          def weighted_avg(avg_name, weight_name)
-            total_val, total_weight = @by_date.values.reduce([0, 0]) do |(sum_val, sum_weight), metrics|
-              val = get_value(metrics, avg_name)
-              weight = get_value(metrics, weight_name)
-              [sum_val + (val * weight), sum_weight + weight]
+          def weighted_median(value_name, weight_name)
+            weighted_values = daily_weighted_values(value_name, weight_name)
+            return 0 if weighted_values.empty?
+
+            total_weight = weighted_values.sum { |(_, weight)| weight }
+            threshold = total_weight / 2.0
+            cumulative_weight = 0.0
+
+            weighted_values.sort_by { |(value, _)| value }.each do |value, weight|
+              cumulative_weight += weight
+              return value.round(2) if cumulative_weight >= threshold
             end
 
-            total_weight.positive? ? (total_val.to_f / total_weight).round(2) : 0
+            weighted_values.last.first.round(2)
           end
 
-          def simple_avg(name)
-            values = @by_name[name]&.map { |m| m[:value] } || []
-            values.any? ? (values.sum.to_f / values.size).round(2) : 0
+          def simple_median(name)
+            values = @by_name[name]&.map { |m| m[:value].to_f } || []
+            median(values).round(2)
           end
 
           def rate(numerator_name, denominator_name)
@@ -135,6 +141,26 @@ module WttjMetrics
           end
 
           private
+
+          def daily_weighted_values(value_name, weight_name)
+            @by_date.values.filter_map do |metrics|
+              value = get_value(metrics, value_name).to_f
+              weight = get_value(metrics, weight_name).to_f
+              next if weight <= 0
+
+              [value, weight]
+            end
+          end
+
+          def median(values)
+            return 0 if values.empty?
+
+            sorted = values.sort
+            mid = sorted.length / 2
+            return sorted[mid] if sorted.length.odd?
+
+            (sorted[mid - 1] + sorted[mid]) / 2.0
+          end
 
           def get_value(metrics, name)
             metrics.find { |m| m[:metric] == name }&.dig(:value) || 0

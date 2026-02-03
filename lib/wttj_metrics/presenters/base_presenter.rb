@@ -19,7 +19,10 @@ module WttjMetrics
       end
 
       def value
-        raw_value.to_i
+        return 0 if raw_value.nil? || (raw_value.is_a?(Float) && raw_value.nan?)
+        return raw_value unless raw_value.is_a?(Numeric)
+
+        format_metric_value(raw_value)
       end
 
       def label

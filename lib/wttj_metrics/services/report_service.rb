@@ -41,7 +41,8 @@ module WttjMetrics
       end
 
       def generator
-        @generator ||= if csv_file.include?('github')
+        @generator ||= case report_source
+                       when 'github'
                          Reports::Github::ReportGenerator.new(
                            csv_file,
                            days: options.days,
@@ -60,6 +61,12 @@ module WttjMetrics
                            end_date: options.end_date
                          )
                        end
+      end
+
+      def report_source
+        return options.source if options.respond_to?(:source) && options.source
+
+        csv_file.include?('github') ? 'github' : 'linear'
       end
 
       def teams_config

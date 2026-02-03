@@ -84,7 +84,7 @@ module WttjMetrics
             stats: {
               min: velocities.min&.round(1) || 0,
               max: velocities.max&.round(1) || 0,
-              avg: safe_average(velocities),
+              avg: safe_median(velocities),
               count: velocities.size
             }
           }
@@ -108,7 +108,7 @@ module WttjMetrics
             stats: {
               min: rates.min&.round(1) || 0,
               max: rates.max&.round(1) || 0,
-              avg: safe_average(rates),
+              avg: safe_median(rates),
               count: rates.size
             }
           }
@@ -203,7 +203,7 @@ module WttjMetrics
                 label: team,
                 data: calculate_percentiles(values),
                 backgroundColor: TEAM_COLORS[idx % TEAM_COLORS.length],
-                value: safe_average(values)
+                value: safe_median(values)
               }
             end,
             percentile_labels: PERCENTILES.map { |percentile| "P#{percentile}" },

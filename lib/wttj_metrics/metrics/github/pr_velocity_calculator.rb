@@ -8,11 +8,11 @@ module WttjMetrics
       class PrVelocityCalculator
         CATEGORY = 'github'
         METRICS = {
-          avg_time_to_merge_days: 'avg_time_to_merge_days',
+          median_time_to_merge_days: 'median_time_to_merge_days',
           total_merged: 'total_merged_prs',
-          avg_time_to_first_review_days: 'avg_time_to_first_review_days',
+          median_time_to_first_review_days: 'median_time_to_first_review_days',
           merge_rate: 'merge_rate',
-          avg_time_to_approval_days: 'avg_time_to_approval_days'
+          median_time_to_approval_days: 'median_time_to_approval_days'
         }.freeze
 
         def initialize(pull_requests)
@@ -23,11 +23,11 @@ module WttjMetrics
           return {} if @pull_requests.empty?
 
           {
-            avg_time_to_merge_days: avg_time_to_merge,
+            median_time_to_merge_days: median_time_to_merge,
             total_merged: merged_prs.size,
-            avg_time_to_first_review_days: avg_time_to_first_review,
+            median_time_to_first_review_days: median_time_to_first_review,
             merge_rate: merge_rate,
-            avg_time_to_approval_days: avg_time_to_approval
+            median_time_to_approval_days: median_time_to_approval
           }
         end
 
@@ -46,19 +46,19 @@ module WttjMetrics
           @merged_prs ||= @pull_requests.select { |pr| pr[:state] == 'MERGED' }
         end
 
-        def avg_time_to_merge
+        def median_time_to_merge
           return 0.0 if merged_prs.empty?
 
-          average_duration(merged_prs) do |pr|
+          median_duration(merged_prs) do |pr|
             days_between(pr[:createdAt], pr[:mergedAt])
           end
         end
 
-        def avg_time_to_first_review
+        def median_time_to_first_review
           prs_with_reviews = @pull_requests.select { |pr| reviews(pr).any? }
           return 0.0 if prs_with_reviews.empty?
 
-          average_duration(prs_with_reviews) do |pr|
+          median_duration(prs_with_reviews) do |pr|
             first_review = reviews(pr).min_by { |r| r[:createdAt] }
             days_between(pr[:createdAt], first_review[:createdAt])
           end
@@ -72,11 +72,11 @@ module WttjMetrics
           (merged_prs.size.to_f / total * 100).round(2)
         end
 
-        def avg_time_to_approval
+        def median_time_to_approval
           prs_with_approval = @pull_requests.select { |pr| approvals(pr).any? }
           return 0.0 if prs_with_approval.empty?
 
-          average_duration(prs_with_approval) do |pr|
+          median_duration(prs_with_approval) do |pr|
             first_approval = approvals(pr).min_by { |r| r[:createdAt] }
             days_between(pr[:createdAt], first_approval[:createdAt])
           end
@@ -94,9 +94,17 @@ module WttjMetrics
           (DateTime.parse(end_date) - DateTime.parse(start_date)).to_f
         end
 
-        def average_duration(collection, &)
-          total = collection.sum(&)
-          (total / collection.size).round(4)
+        def median_duration(collection, &)
+          values = collection.map(&)
+          median(values).round(4)
+        end
+
+        def median(values)
+          sorted = values.sort
+          mid = sorted.length / 2
+          return sorted[mid] if sorted.length.odd?
+
+          (sorted[mid - 1] + sorted[mid]) / 2.0
         end
       end
     end

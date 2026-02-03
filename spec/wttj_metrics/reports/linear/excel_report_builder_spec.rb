@@ -14,7 +14,7 @@ RSpec.describe WttjMetrics::Reports::Linear::ExcelReportBuilder do
         { date: '2024-12-07', category: 'flow', metric: 'throughput', value: 10 }
       ],
       cycle_metrics: [
-        { date: '2024-12-07', category: 'cycle', metric: 'avg_cycle_time', value: 5.5 }
+        { date: '2024-12-07', category: 'cycle_metrics', metric: 'median_cycle_velocity', value: 5.5 }
       ],
       team_metrics: [],
       bug_metrics: [],

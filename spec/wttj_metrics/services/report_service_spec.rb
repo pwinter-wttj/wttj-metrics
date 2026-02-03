@@ -15,7 +15,8 @@ RSpec.describe WttjMetrics::Services::ReportService do
       teams: %w[ATS Platform],
       teams_config: nil,
       start_date: nil,
-      end_date: nil
+      end_date: nil,
+      source: nil
     )
   end
 
@@ -27,10 +28,19 @@ RSpec.describe WttjMetrics::Services::ReportService do
     )
   end
 
+  let(:github_report_generator) do
+    instance_double(
+      WttjMetrics::Reports::Github::ReportGenerator,
+      generate_html: nil,
+      generate_excel: nil
+    )
+  end
+
   before do
     allow(File).to receive(:exist?).with(csv_file).and_return(true)
     allow(WttjMetrics::Services::DirectoryPreparer).to receive(:ensure_exists)
     allow(WttjMetrics::Reports::Linear::ReportGenerator).to receive(:new).and_return(report_generator)
+    allow(WttjMetrics::Reports::Github::ReportGenerator).to receive(:new).and_return(github_report_generator)
   end
 
   describe '#call' do
@@ -61,6 +71,36 @@ RSpec.describe WttjMetrics::Services::ReportService do
         start_date: nil,
         end_date: nil
       )
+    end
+
+    context 'when options specify github source' do
+      let(:options) do
+        double(
+          'Options',
+          output: 'tmp/report.html',
+          excel_enabled: false,
+          excel_path: 'tmp/report.xlsx',
+          days: 90,
+          teams: %w[ATS Platform],
+          teams_config: nil,
+          start_date: nil,
+          end_date: nil,
+          source: 'github'
+        )
+      end
+
+      it 'creates a Github::ReportGenerator with CSV file and options' do
+        report_service.call
+
+        expect(WttjMetrics::Reports::Github::ReportGenerator).to have_received(:new).with(
+          csv_file,
+          days: 90,
+          teams: %w[ATS Platform],
+          teams_config: nil,
+          start_date: nil,
+          end_date: nil
+        )
+      end
     end
 
     it 'generates HTML report' do

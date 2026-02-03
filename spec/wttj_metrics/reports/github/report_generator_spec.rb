@@ -6,19 +6,19 @@ RSpec.describe WttjMetrics::Reports::Github::ReportGenerator do
   let(:csv_path) { 'spec/fixtures/github_metrics.csv' }
   let(:metrics_data) do
     [
-      { date: yesterday, metric: 'avg_time_to_merge_days', value: 2.5 },
-      { date: today, metric: 'avg_time_to_merge_days', value: 2.0 },
+      { date: yesterday, metric: 'median_time_to_merge_days', value: 2.5 },
+      { date: today, metric: 'median_time_to_merge_days', value: 2.0 },
       { date: yesterday, metric: 'total_merged_prs', value: 10 },
       { date: today, metric: 'total_merged_prs', value: 15 },
-      { date: yesterday, metric: 'avg_reviews_per_pr', value: 1.5 },
-      { date: today, metric: 'avg_reviews_per_pr', value: 1.8 },
-      { date: yesterday, metric: 'avg_comments_per_pr', value: 3.0 },
-      { date: today, metric: 'avg_comments_per_pr', value: 3.5 },
-      { date: today, metric: 'avg_additions_per_pr', value: 100 },
-      { date: today, metric: 'avg_deletions_per_pr', value: 50 },
-      { date: today, metric: 'avg_changed_files_per_pr', value: 5 },
-      { date: today, metric: 'avg_commits_per_pr', value: 2 },
-      { date: today, metric: 'avg_time_to_first_review_days', value: 0.5 }
+      { date: yesterday, metric: 'median_reviews_per_pr', value: 1.5 },
+      { date: today, metric: 'median_reviews_per_pr', value: 1.8 },
+      { date: yesterday, metric: 'median_comments_per_pr', value: 3.0 },
+      { date: today, metric: 'median_comments_per_pr', value: 3.5 },
+      { date: today, metric: 'median_additions_per_pr', value: 100 },
+      { date: today, metric: 'median_deletions_per_pr', value: 50 },
+      { date: today, metric: 'median_changed_files_per_pr', value: 5 },
+      { date: today, metric: 'median_commits_per_pr', value: 2 },
+      { date: today, metric: 'median_time_to_first_review_days', value: 0.5 }
     ]
   end
   let(:generator) { described_class.new(csv_path) }
@@ -38,18 +38,18 @@ RSpec.describe WttjMetrics::Reports::Github::ReportGenerator do
   describe '#metrics' do
     it 'returns latest metrics' do
       expect(generator.metrics).to eq({
-                                        avg_time_to_merge: 2.0,
+                                        median_time_to_merge: 2.0,
                                         total_merged: 15,
-                                        avg_reviews: 1.8,
-                                        avg_comments: 3.5,
-                                        avg_additions: 100,
-                                        avg_deletions: 50,
-                                        avg_changed_files: 5,
-                                        avg_commits: 2,
-                                        avg_time_to_first_review: 0.5,
+                                        median_reviews: 1.8,
+                                        median_comments: 3.5,
+                                        median_additions: 100,
+                                        median_deletions: 50,
+                                        median_changed_files: 5,
+                                        median_commits: 2,
+                                        median_time_to_first_review: 0.5,
                                         merge_rate: 0,
-                                        avg_time_to_approval: 0,
-                                        avg_rework_cycles: 0,
+                                        median_time_to_approval: 0,
+                                        median_rework_cycles: 0,
                                         unreviewed_pr_rate: 0,
                                         ci_success_rate: 0,
                                         deploy_frequency: 0,
@@ -127,7 +127,7 @@ RSpec.describe WttjMetrics::Reports::Github::ReportGenerator do
     it 'returns history for each metric' do
       history = generator.history
 
-      expect(history[:avg_time_to_merge]).to eq([
+      expect(history[:median_time_to_merge]).to eq([
                                                   { date: yesterday, value: 2.5 },
                                                   { date: today, value: 2.0 }
                                                 ])
@@ -160,17 +160,17 @@ RSpec.describe WttjMetrics::Reports::Github::ReportGenerator do
         { date: '2025-12-01', metric: 'closed', value: 2 },
         { date: '2025-12-01', metric: 'open', value: 10 },
         { date: '2025-12-01', metric: 'created', value: 10 },
-        { date: '2025-12-01', metric: 'avg_time_to_merge_hours', value: 10.0 },
+        { date: '2025-12-01', metric: 'median_time_to_merge_hours', value: 10.0 },
         { date: '2025-12-02', metric: 'merged', value: 5 },
         { date: '2025-12-02', metric: 'closed', value: 3 },
         { date: '2025-12-02', metric: 'open', value: 12 },
         { date: '2025-12-02', metric: 'created', value: 10 },
-        { date: '2025-12-02', metric: 'avg_time_to_merge_hours', value: 20.0 },
+        { date: '2025-12-02', metric: 'median_time_to_merge_hours', value: 20.0 },
         { date: '2025-12-08', metric: 'merged', value: 8 },
         { date: '2025-12-08', metric: 'closed', value: 4 },
         { date: '2025-12-08', metric: 'open', value: 15 },
         { date: '2025-12-08', metric: 'created', value: 20 },
-        { date: '2025-12-08', metric: 'avg_time_to_merge_hours', value: 5.0 }
+        { date: '2025-12-08', metric: 'median_time_to_merge_hours', value: 5.0 }
       ]
 
       parser = instance_double(WttjMetrics::Data::CsvParser)
@@ -184,7 +184,7 @@ RSpec.describe WttjMetrics::Reports::Github::ReportGenerator do
       expect(breakdown[:labels]).to include('2025-12-01', '2025-12-08')
       expect(breakdown[:datasets][:merged]).to eq([10, 8])
       expect(breakdown[:datasets][:open]).to eq([12, 15])
-      expect(breakdown[:datasets][:avg_time_to_merge]).to eq([15.0, 5.0])
+      expect(breakdown[:datasets][:median_time_to_merge]).to eq([10.0, 5.0])
     end
   end
 
@@ -227,6 +227,32 @@ RSpec.describe WttjMetrics::Reports::Github::ReportGenerator do
       expect(metrics['TeamA'][:metrics][:total_merged]).to eq(5) # Latest value
       expect(metrics['TeamA'][:history][:total_merged].size).to eq(2)
       expect(metrics['TeamA'][:daily_breakdown][:datasets][:merged]).to include(2, 3)
+    end
+
+    context 'when no team metrics exist in the CSV but a teams config is provided' do
+      subject(:configured_generator) { described_class.new(csv_path, teams_config: teams_config) }
+
+      let(:teams_config) { instance_double(WttjMetrics::Values::TeamConfiguration, defined_teams: ['ATS']) }
+
+      before do
+        parser = instance_double(WttjMetrics::Data::CsvParser)
+        allow(WttjMetrics::Data::CsvParser).to receive(:new).with(csv_path).and_return(parser)
+        allow(parser).to receive_messages(data: [], metrics_by_category: { 'github' => [], 'github_daily' => [] })
+
+        team_service = instance_double(WttjMetrics::Reports::Github::TeamService, resolve_teams: [])
+        allow(WttjMetrics::Reports::Github::TeamService).to receive(:new).and_return(team_service)
+      end
+
+      it 'returns an empty hash and exposes a warning' do
+        # Exercise
+        metrics = configured_generator.team_metrics
+
+        # Verify
+        aggregate_failures do
+          expect(metrics).to eq({})
+          expect(configured_generator.team_metrics_warning).to match(/No GitHub team metrics found/i)
+        end
+      end
     end
   end
 

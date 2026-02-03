@@ -122,9 +122,9 @@ RSpec.describe WttjMetrics::Metrics::Linear::DistributionCalculator do
         ]
       end
 
-      it 'calculates average backlog age' do
+      it 'calculates median backlog age' do
         # (10 + 5) / 2 = 7.5 days (approximately, depends on time)
-        expect(metrics[:avg_backlog_age_days]).to be_within(1).of(7.5)
+        expect(metrics[:median_backlog_age_days]).to be_within(1).of(7.5)
       end
     end
 
@@ -135,7 +135,7 @@ RSpec.describe WttjMetrics::Metrics::Linear::DistributionCalculator do
       end
 
       it 'returns zero' do
-        expect(metrics[:avg_backlog_age_days]).to eq(0)
+        expect(metrics[:median_backlog_age_days]).to eq(0)
       end
     end
   end

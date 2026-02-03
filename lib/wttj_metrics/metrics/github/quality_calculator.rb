@@ -100,7 +100,15 @@ module WttjMetrics
           times = merged_prs.filter_map { |pr| time_to_green_for_pr(pr) }
           return 0.0 if times.empty?
 
-          (times.sum / times.size).round(2)
+          median(times).round(2)
+        end
+
+        def median(values)
+          sorted = values.sort
+          mid = sorted.length / 2
+          return sorted[mid] if sorted.length.odd?
+
+          (sorted[mid - 1] + sorted[mid]) / 2.0
         end
 
         def time_to_green_for_pr(pull_request)

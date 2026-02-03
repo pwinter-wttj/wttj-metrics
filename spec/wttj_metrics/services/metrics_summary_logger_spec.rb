@@ -11,8 +11,8 @@ RSpec.describe WttjMetrics::Services::MetricsSummaryLogger do
 
       let(:rows) do
         [
-          ['2024-01-01', 'flow', 'avg_cycle_time_days', '10.5'],
-          ['2024-01-01', 'flow', 'avg_lead_time_days', '24.3'],
+          ['2024-01-01', 'flow', 'median_cycle_time_days', '10.5'],
+          ['2024-01-01', 'flow', 'median_lead_time_days', '24.3'],
           ['2024-01-01', 'cycle_metrics', 'total_cycles', '15'],
           ['2024-01-01', 'team', 'total_team_members', '25'],
           ['2024-01-01', 'issues', 'total_issues', '1500'],
@@ -29,8 +29,8 @@ RSpec.describe WttjMetrics::Services::MetricsSummaryLogger do
       it 'logs each summary row with metric name and value' do
         summary_logger.call
 
-        expect(logger).to have_received(:info).with('  - avg_cycle_time_days: 10.5')
-        expect(logger).to have_received(:info).with('  - avg_lead_time_days: 24.3')
+        expect(logger).to have_received(:info).with('  - median_cycle_time_days: 10.5')
+        expect(logger).to have_received(:info).with('  - median_lead_time_days: 24.3')
         expect(logger).to have_received(:info).with('  - total_cycles: 15')
         expect(logger).to have_received(:info).with('  - total_team_members: 25')
         expect(logger).to have_received(:info).with('  - total_issues: 1500')
@@ -49,7 +49,7 @@ RSpec.describe WttjMetrics::Services::MetricsSummaryLogger do
 
       let(:rows) do
         [
-          ['2024-01-01', 'flow', 'avg_cycle_time_days', '10.5'],
+          ['2024-01-01', 'flow', 'median_cycle_time_days', '10.5'],
           ['2024-01-01', 'distribution', 'feature_count', '100'],
           ['2024-01-01', 'team', 'total_team_members', '25'],
           ['2024-01-01', 'bugs', 'total_bugs', '50'],
@@ -60,7 +60,7 @@ RSpec.describe WttjMetrics::Services::MetricsSummaryLogger do
       it 'only logs rows with summary categories' do
         summary_logger.call
 
-        expect(logger).to have_received(:info).with('  - avg_cycle_time_days: 10.5')
+        expect(logger).to have_received(:info).with('  - median_cycle_time_days: 10.5')
         expect(logger).to have_received(:info).with('  - total_team_members: 25')
         expect(logger).to have_received(:info).with('  - total_issues: 1500')
       end

@@ -35,6 +35,33 @@ h1 {
     font-size: 1rem;
 }
 
+/* Callouts */
+.callout {
+    background: #FFFFFF;
+    border: 1px solid #DEDEDE;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.callout code {
+    background: #F3F0EC;
+    padding: 0.1rem 0.35rem;
+    border-radius: 6px;
+    font-size: 0.9em;
+}
+
+.callout-warning {
+    border-color: #E1B96A;
+    background: #FFF8E8;
+}
+
+.callout-body {
+    margin-top: 0.5rem;
+    color: #585858;
+    line-height: 1.4;
+}
+
 /* Metrics Grid & Cards */
 .metrics-grid {
     display: grid;
@@ -194,6 +221,22 @@ h1 {
     padding: 1.5rem;
     min-width: 0;
     /* Prevent grid blowout */
+}
+
+/* Callouts */
+.callout {
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    border: 1px solid;
+}
+
+.callout-warning {
+    background: #FFF7E6;
+    border-color: #F2C46D;
+    color: #5A3E00;
 }
 
 .chart-card.full-width {

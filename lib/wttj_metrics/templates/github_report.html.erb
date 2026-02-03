@@ -30,9 +30,9 @@
       <div class="section-content">
       <div class="metrics-grid">
         <div class="metric-card">
-          <span class="tooltip">Average time from PR creation to merge</span>
-          <div class="metric-value"><%= metrics[:avg_time_to_merge].round(1) %>d</div>
-          <div class="metric-label">Avg Time to Merge</div>
+          <span class="tooltip">Median time from PR creation to merge</span>
+          <div class="metric-value"><%= metrics[:median_time_to_merge].round(1) %>d</div>
+          <div class="metric-label">Median Time to Merge</div>
         </div>
         <div class="metric-card">
           <span class="tooltip">Total number of PRs merged in the period</span>
@@ -40,19 +40,19 @@
           <div class="metric-label">Total Merged PRs</div>
         </div>
         <div class="metric-card">
-          <span class="tooltip">Average number of reviews per PR</span>
-          <div class="metric-value"><%= metrics[:avg_reviews].round(1) %></div>
-          <div class="metric-label">Avg Reviews / PR</div>
+          <span class="tooltip">Median number of reviews per PR</span>
+          <div class="metric-value"><%= metrics[:median_reviews].round(1) %></div>
+          <div class="metric-label">Median Reviews / PR</div>
         </div>
         <div class="metric-card">
-          <span class="tooltip">Average number of comments per PR</span>
-          <div class="metric-value"><%= metrics[:avg_comments].round(1) %></div>
-          <div class="metric-label">Avg Comments / PR</div>
+          <span class="tooltip">Median number of comments per PR</span>
+          <div class="metric-value"><%= metrics[:median_comments].round(1) %></div>
+          <div class="metric-label">Median Comments / PR</div>
         </div>
         <div class="metric-card">
-          <span class="tooltip">Average time from PR creation to first review</span>
-          <div class="metric-value"><%= metrics[:avg_time_to_first_review].round(1) %>d</div>
-          <div class="metric-label">Avg Time to First Review</div>
+          <span class="tooltip">Median time from PR creation to first review</span>
+          <div class="metric-value"><%= metrics[:median_time_to_first_review].round(1) %>d</div>
+          <div class="metric-label">Median Time to First Review</div>
         </div>
         <div class="metric-card">
           <span class="tooltip">Percentage of resolved PRs that were merged</span>
@@ -60,13 +60,13 @@
           <div class="metric-label">Acceptance Rate</div>
         </div>
         <div class="metric-card">
-          <span class="tooltip">Average time from PR creation to first approval</span>
-          <div class="metric-value"><%= metrics[:avg_time_to_approval].round(1) %>d</div>
-          <div class="metric-label">Time to Approval</div>
+          <span class="tooltip">Median time from PR creation to first approval</span>
+          <div class="metric-value"><%= metrics[:median_time_to_approval].round(1) %>d</div>
+          <div class="metric-label">Median Time to Approval</div>
         </div>
         <div class="metric-card">
-          <span class="tooltip">Average number of 'Changes Requested' reviews per PR</span>
-          <div class="metric-value"><%= metrics[:avg_rework_cycles].round(1) %></div>
+          <span class="tooltip">Median number of 'Changes Requested' reviews per PR</span>
+          <div class="metric-value"><%= metrics[:median_rework_cycles].round(1) %></div>
           <div class="metric-label">Rework Cycles</div>
         </div>
         <div class="metric-card">
@@ -80,14 +80,14 @@
           <div class="metric-label">Daily Deploys</div>
         </div>
         <div class="metric-card">
-          <span class="tooltip">Average lines added per PR</span>
-          <div class="metric-value"><%= metrics[:avg_additions].to_i %></div>
-          <div class="metric-label">Avg Additions / PR</div>
+          <span class="tooltip">Median lines added per PR</span>
+          <div class="metric-value"><%= metrics[:median_additions].to_i %></div>
+          <div class="metric-label">Median Additions / PR</div>
         </div>
         <div class="metric-card">
-          <span class="tooltip">Average lines deleted per PR</span>
-          <div class="metric-value"><%= metrics[:avg_deletions].to_i %></div>
-          <div class="metric-label">Avg Deletions / PR</div>
+          <span class="tooltip">Median lines deleted per PR</span>
+          <div class="metric-value"><%= metrics[:median_deletions].to_i %></div>
+          <div class="metric-label">Median Deletions / PR</div>
         </div>
       </div>
       </div>
@@ -107,7 +107,7 @@
           <h3 class="chart-title">
             Time to Merge History
             <span class="tooltip-icon">?
-              <span class="tooltip-text">Average time from PR creation to merge. Tracks how quickly code is integrated.</span>
+              <span class="tooltip-text">Median time from PR creation to merge. Tracks how quickly code is integrated.</span>
             </span>
           </h3>
           <div class="chart-container">
@@ -118,7 +118,7 @@
           <h3 class="chart-title">
             Time to First Review History (Days)
             <span class="tooltip-icon">?
-              <span class="tooltip-text">Average time from PR creation to the first review comment. Indicates review responsiveness.</span>
+              <span class="tooltip-text">Median time from PR creation to the first review comment. Indicates review responsiveness.</span>
             </span>
           </h3>
           <div class="chart-container">
@@ -129,7 +129,7 @@
           <h3 class="chart-title">
             Time to Approval History (Days)
             <span class="tooltip-icon">?
-              <span class="tooltip-text">Average time from PR creation to the first approval. Measures review cycle efficiency.</span>
+              <span class="tooltip-text">Median time from PR creation to the first approval. Measures review cycle efficiency.</span>
             </span>
           </h3>
           <div class="chart-container">
@@ -231,7 +231,7 @@
           <h3 class="chart-title">
             Time to Green History (Hours)
             <span class="tooltip-icon">?
-              <span class="tooltip-text">Average time from PR creation to passing CI checks. Lower means faster feedback loops.</span>
+              <span class="tooltip-text">Median time from PR creation to passing CI checks. Lower means faster feedback loops.</span>
             </span>
           </h3>
           <div class="chart-container">
@@ -253,7 +253,7 @@
           <h3 class="chart-title">
             PR Size History
             <span class="tooltip-icon">?
-              <span class="tooltip-text">Average lines added and deleted per PR. Smaller PRs are easier to review and merge.</span>
+              <span class="tooltip-text">Median lines added and deleted per PR. Smaller PRs are easier to review and merge.</span>
             </span>
           </h3>
           <div class="chart-container">
@@ -311,7 +311,7 @@
           <h3 class="chart-title">
             Reviews per PR History
             <span class="tooltip-icon">?
-              <span class="tooltip-text">Average number of reviews per PR. Indicates level of team collaboration and code scrutiny.</span>
+              <span class="tooltip-text">Median number of reviews per PR. Indicates level of team collaboration and code scrutiny.</span>
             </span>
           </h3>
           <div class="chart-container">
@@ -322,7 +322,7 @@
           <h3 class="chart-title">
             Comments per PR History
             <span class="tooltip-icon">?
-              <span class="tooltip-text">Average number of comments per PR. Indicates level of discussion and feedback.</span>
+              <span class="tooltip-text">Median number of comments per PR. Indicates level of discussion and feedback.</span>
             </span>
           </h3>
           <div class="chart-container">
@@ -333,7 +333,7 @@
           <h3 class="chart-title">
             Rework Cycles History
             <span class="tooltip-icon">?
-              <span class="tooltip-text">Average number of times changes were requested. Lower means clearer requirements and code.</span>
+              <span class="tooltip-text">Median number of times changes were requested. Lower means clearer requirements and code.</span>
             </span>
           </h3>
           <div class="chart-container">
@@ -424,6 +424,9 @@
       <div class="section-content">
         <div class="charts-grid">
           <div class="chart-card full-width">
+            <% if team_metrics_warning %>
+              <div class="callout callout-warning"><%= ERB::Util.html_escape(team_metrics_warning) %></div>
+            <% end %>
             <div class="search-container">
               <input type="text" id="teamSearch" placeholder="Search teams..." oninput="filterTable('teamSearch', 'teamMetricsTable')" class="search-input">
             </div>
@@ -433,11 +436,11 @@
               <tr>
                 <th onclick="sortTable('teamMetricsTable', 0)" class="sortable">Team</th>
                 <th onclick="sortTable('teamMetricsTable', 1)" class="sortable">Merged PRs<br><span>Total: <%= metrics[:total_merged].to_i %></span></th>
-                <th onclick="sortTable('teamMetricsTable', 2)" class="sortable">Avg Time to Merge (d)<br><span>Avg: <%= format_metric_value(metrics[:avg_time_to_merge]) %></span></th>
-                <th onclick="sortTable('teamMetricsTable', 3)" class="sortable">Avg Reviews<br><span>Avg: <%= format_metric_value(metrics[:avg_reviews]) %></span></th>
-                <th onclick="sortTable('teamMetricsTable', 4)" class="sortable">Unreviewed Rate (%)<br><span>Avg: <%= format_metric_value(metrics[:unreviewed_pr_rate]) %></span></th>
-                <th onclick="sortTable('teamMetricsTable', 5)" class="sortable">Merge Rate (%)<br><span>Avg: <%= format_metric_value(metrics[:merge_rate]) %></span></th>
-                <th onclick="sortTable('teamMetricsTable', 6)" class="sortable">CI Success (%)<br><span>Avg: <%= format_metric_value(metrics[:ci_success_rate]) %></span></th>
+                <th onclick="sortTable('teamMetricsTable', 2)" class="sortable">Median Time to Merge (d)<br><span>Median: <%= format_metric_value(metrics[:median_time_to_merge]) %></span></th>
+                <th onclick="sortTable('teamMetricsTable', 3)" class="sortable">Median Reviews<br><span>Median: <%= format_metric_value(metrics[:median_reviews]) %></span></th>
+                <th onclick="sortTable('teamMetricsTable', 4)" class="sortable">Unreviewed Rate (%)<br><span>Median: <%= format_metric_value(metrics[:unreviewed_pr_rate]) %></span></th>
+                <th onclick="sortTable('teamMetricsTable', 5)" class="sortable">Merge Rate (%)<br><span>Median: <%= format_metric_value(metrics[:merge_rate]) %></span></th>
+                <th onclick="sortTable('teamMetricsTable', 6)" class="sortable">CI Success (%)<br><span>Median: <%= format_metric_value(metrics[:ci_success_rate]) %></span></th>
               </tr>
             </thead>
             <tbody>
@@ -445,29 +448,46 @@
                 <tr class="team-row">
                   <td><%= team_name %></td>
                   <td><%= data[:metrics][:total_merged].to_i %></td>
-                  <td <%= metric_color_class(data[:metrics][:avg_time_to_merge], metrics[:avg_time_to_merge], inverse: true) %>>
-                    <%= format_metric_value(data[:metrics][:avg_time_to_merge]) %>
+                  <% team_time_to_merge = data[:metrics][:median_time_to_merge] %>
+                  <td <%= metric_color_class(team_time_to_merge, metrics[:median_time_to_merge], inverse: true) %>>
+                    <%= team_time_to_merge.nil? ? '-' : format_metric_value(team_time_to_merge) %>
                   </td>
-                  <td <%= metric_color_class(data[:metrics][:avg_reviews], metrics[:avg_reviews]) %>>
-                    <%= format_metric_value(data[:metrics][:avg_reviews]) %>
-                  </td>
-                  <td>
-                    <div class="progress-bar">
-                      <div class="progress-fill <%= metric_color_class(data[:metrics][:unreviewed_pr_rate], metrics[:unreviewed_pr_rate], inverse: true, return_class_only: true) %>" style="width: <%= data[:metrics][:unreviewed_pr_rate] %>%"></div>
-                    </div>
-                    <small><%= format_metric_value(data[:metrics][:unreviewed_pr_rate]) %>%</small>
+                  <% team_reviews = data[:metrics][:median_reviews] %>
+                  <td <%= metric_color_class(team_reviews, metrics[:median_reviews]) %>>
+                    <%= team_reviews.nil? ? '-' : format_metric_value(team_reviews) %>
                   </td>
                   <td>
-                    <div class="progress-bar">
-                      <div class="progress-fill <%= metric_color_class(data[:metrics][:merge_rate], metrics[:merge_rate], return_class_only: true) %>" style="width: <%= data[:metrics][:merge_rate] %>%"></div>
-                    </div>
-                    <small><%= format_metric_value(data[:metrics][:merge_rate]) %>%</small>
+                    <% team_unreviewed_rate = data[:metrics][:unreviewed_pr_rate] %>
+                    <% if team_unreviewed_rate.nil? %>
+                      <small>-</small>
+                    <% else %>
+                      <div class="progress-bar">
+                        <div class="progress-fill <%= metric_color_class(team_unreviewed_rate, metrics[:unreviewed_pr_rate], inverse: true, return_class_only: true) %>" style="width: <%= team_unreviewed_rate %>%"></div>
+                      </div>
+                      <small><%= format_metric_value(team_unreviewed_rate) %>%</small>
+                    <% end %>
                   </td>
                   <td>
-                    <div class="progress-bar">
-                      <div class="progress-fill <%= metric_color_class(data[:metrics][:ci_success_rate], metrics[:ci_success_rate], return_class_only: true) %>" style="width: <%= data[:metrics][:ci_success_rate] %>%"></div>
-                    </div>
-                    <small><%= format_metric_value(data[:metrics][:ci_success_rate]) %>%</small>
+                    <% team_merge_rate = data[:metrics][:merge_rate] %>
+                    <% if team_merge_rate.nil? %>
+                      <small>-</small>
+                    <% else %>
+                      <div class="progress-bar">
+                        <div class="progress-fill <%= metric_color_class(team_merge_rate, metrics[:merge_rate], return_class_only: true) %>" style="width: <%= team_merge_rate %>%"></div>
+                      </div>
+                      <small><%= format_metric_value(team_merge_rate) %>%</small>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% team_ci_success_rate = data[:metrics][:ci_success_rate] %>
+                    <% if team_ci_success_rate.nil? %>
+                      <small>-</small>
+                    <% else %>
+                      <div class="progress-bar">
+                        <div class="progress-fill <%= metric_color_class(team_ci_success_rate, metrics[:ci_success_rate], return_class_only: true) %>" style="width: <%= team_ci_success_rate %>%"></div>
+                      </div>
+                      <small><%= format_metric_value(team_ci_success_rate) %>%</small>
+                    <% end %>
                   </td>
                 </tr>
               <% end %>
@@ -528,97 +548,97 @@
       });
       
     // Time to Merge Chart
-    const avgTimeMergeHours = <%= breakdown[:datasets][:avg_time_to_merge].to_json %>;
-    const avgTimeMergeDays = avgTimeMergeHours.map(h => (h / 24).toFixed(2));
+    const medianTimeMergeHours = <%= breakdown[:datasets][:median_time_to_merge].to_json %>;
+    const medianTimeMergeDays = medianTimeMergeHours.map(h => (h / 24).toFixed(2));
 
     chartInstances.timeToMerge = createMetricLineChart(
       'timeToMergeChart',
       breakdownLabels,
-      avgTimeMergeDays,
-      'Avg Time to Merge (Days)',
+      medianTimeMergeDays,
+      'Median Time to Merge (Days)',
       colors.blue,
-      globalMetrics.avg_time_to_merge
+      globalMetrics.median_time_to_merge
     );
 
     // Time to First Review Chart
-    const avgTimeFirstReviewRaw = <%= breakdown[:datasets][:avg_time_to_first_review].to_json %>;
+    const medianTimeFirstReviewRaw = <%= breakdown[:datasets][:median_time_to_first_review].to_json %>;
     // Data is already in days
-    const avgTimeFirstReviewDays = avgTimeFirstReviewRaw.map(d => Number(d).toFixed(2));
+    const medianTimeFirstReviewDays = medianTimeFirstReviewRaw.map(d => Number(d).toFixed(2));
 
     chartInstances.timeToFirstReview = createMetricLineChart(
       'timeToFirstReviewChart',
       breakdownLabels,
-      avgTimeFirstReviewDays,
-      'Avg Time to First Review (Days)',
+      medianTimeFirstReviewDays,
+      'Median Time to First Review (Days)',
       colors.cyan,
-      globalMetrics.avg_time_to_first_review
+      globalMetrics.median_time_to_first_review
     );
 
     // Time to Approval Chart
     chartInstances.timeToApproval = createMetricLineChart(
       'timeToApprovalChart',
       breakdownLabels,
-      <%= breakdown[:datasets][:avg_time_to_approval].to_json %>,
-      'Avg Time to Approval (Days)',
+      <%= breakdown[:datasets][:median_time_to_approval].to_json %>,
+      'Median Time to Approval (Days)',
       colors.green,
-      globalMetrics.avg_time_to_approval
+      globalMetrics.median_time_to_approval
     );
 
     // Reviews & Comments Charts
-    const avgReviews = <%= breakdown[:datasets][:avg_reviews].to_json %>;
-    const avgComments = <%= breakdown[:datasets][:avg_comments].to_json %>;
-    const avgRework = <%= breakdown[:datasets][:avg_rework_cycles].to_json %>;
+    const medianReviews = <%= breakdown[:datasets][:median_reviews].to_json %>;
+    const medianComments = <%= breakdown[:datasets][:median_comments].to_json %>;
+    const medianRework = <%= breakdown[:datasets][:median_rework_cycles].to_json %>;
 
     chartInstances.reviews = createMetricLineChart(
       'reviewsChart',
       breakdownLabels,
-      avgReviews,
-      'Avg Reviews',
+      medianReviews,
+      'Median Reviews',
       colors.purple,
-      globalMetrics.avg_reviews
+      globalMetrics.median_reviews
     );
 
     chartInstances.comments = createMetricLineChart(
       'commentsChart',
       breakdownLabels,
-      avgComments,
-      'Avg Comments',
+      medianComments,
+      'Median Comments',
       colors.orange,
-      globalMetrics.avg_comments
+      globalMetrics.median_comments
     );
 
     chartInstances.reworkCycles = createMetricLineChart(
       'reworkCyclesChart',
       breakdownLabels,
-      avgRework,
-      'Avg Rework Cycles',
+      medianRework,
+      'Median Rework Cycles',
       colors.red,
-      globalMetrics.avg_rework_cycles
+      globalMetrics.median_rework_cycles
     );
 
     // PR Size Chart
-    const avgAdditionsRaw = <%= breakdown[:datasets][:avg_additions].to_json %>;
-    const avgDeletionsRaw = <%= breakdown[:datasets][:avg_deletions].to_json %>;
+    const medianAdditionsRaw = <%= breakdown[:datasets][:median_additions].to_json %>;
+    const medianDeletionsRaw = <%= breakdown[:datasets][:median_deletions].to_json %>;
 
-    const sizeTotals = breakdownLabels.map((_, i) => (avgAdditionsRaw[i] || 0) + (avgDeletionsRaw[i] || 0));
-    const additionsPct = avgAdditionsRaw.map((val, i) => sizeTotals[i] > 0 ? (val / sizeTotals[i] * 100) : 0);
-    const deletionsPct = avgDeletionsRaw.map((val, i) => sizeTotals[i] > 0 ? (val / sizeTotals[i] * 100) : 0);
+    const sizeTotals = breakdownLabels.map((_, i) => (medianAdditionsRaw[i] || 0) + (medianDeletionsRaw[i] || 0));
+    const additionsPct = medianAdditionsRaw.map((val, i) => sizeTotals[i] > 0 ? (val / sizeTotals[i] * 100) : 0);
+    const deletionsPct = medianDeletionsRaw.map((val, i) => sizeTotals[i] > 0 ? (val / sizeTotals[i] * 100) : 0);
 
     chartInstances.prSize = createStackedBarChart(
       'prSizeChart',
       breakdownLabels,
       [
         {
-          label: 'Avg Additions',
+          label: 'Median Additions',
           data: additionsPct,
           backgroundColor: colors.green,
-          raw: avgAdditionsRaw
+          raw: medianAdditionsRaw
         },
         {
-          label: 'Avg Deletions',
+          label: 'Median Deletions',
           data: deletionsPct,
           backgroundColor: colors.red,
-          raw: avgDeletionsRaw
+          raw: medianDeletionsRaw
         }
       ]
     );
@@ -657,7 +677,7 @@
       'CI Success Rate (%)',
       colors.green,
       globalMetrics.ci_success_rate,
-      'Period Avg',
+      'Period Median',
       { scales: { y: { beginAtZero: true, max: 100 } } }
     );
 
@@ -668,7 +688,7 @@
       'Acceptance Rate (%)',
       colors.blue,
       globalMetrics.merge_rate,
-      'Period Avg',
+      'Period Median',
       { scales: { y: { beginAtZero: true, max: 100 } } }
     );
 
@@ -679,7 +699,7 @@
       'Unreviewed PR Rate (%)',
       colors.red,
       globalMetrics.unreviewed_pr_rate,
-      'Period Avg',
+      'Period Median',
       { scales: { y: { beginAtZero: true, max: 100 } } }
     );
 
@@ -691,7 +711,7 @@
       'Hotfix Rate (%)',
       colors.red,
       globalMetrics.hotfix_rate,
-      'Period Avg',
+      'Period Median',
       { scales: { y: { beginAtZero: true, max: 100 } } }
     );
 
@@ -717,7 +737,7 @@
           data: deployFrequency,
           backgroundColor: colors.yellow
         },
-        createBaselineDataset(globalMetrics.deploy_frequency, 'Period Avg', colors.yellow, breakdownLabels.length)
+        createBaselineDataset(globalMetrics.deploy_frequency, 'Period Median', colors.yellow, breakdownLabels.length)
       ]
     );
 
@@ -809,7 +829,7 @@
           },
           title: {
             display: true,
-            text: `Avg: ${timeToReviewPct.stats.avg} days | ${timeToReviewPct.stats.count} data points`,
+            text: `Median: ${timeToReviewPct.stats.avg} days | ${timeToReviewPct.stats.count} data points`,
             position: 'bottom',
             font: { size: 11, weight: 'normal' }
           }
@@ -847,7 +867,7 @@
           },
           title: {
             display: true,
-            text: `Avg: ${timeToMergePct.stats.avg} days | ${timeToMergePct.stats.count} data points`,
+            text: `Median: ${timeToMergePct.stats.avg} days | ${timeToMergePct.stats.count} data points`,
             position: 'bottom',
             font: { size: 11, weight: 'normal' }
           }
@@ -892,7 +912,7 @@
           },
           title: {
             display: true,
-            text: `Total (Add+Del) - Avg: ${prSizePct.stats.avg} | P90: ${prSizePct.percentiles[2]} lines`,
+            text: `Total (Add+Del) - Median: ${prSizePct.stats.avg} | P90: ${prSizePct.percentiles[2]} lines`,
             position: 'bottom',
             font: { size: 11, weight: 'normal' }
           }
@@ -988,7 +1008,7 @@
           },
           title: {
             display: true,
-            text: `Avg: ${timeToGreenPct.stats.avg} hours | ${timeToGreenPct.stats.count} data points`,
+            text: `Median: ${timeToGreenPct.stats.avg} hours | ${timeToGreenPct.stats.count} data points`,
             position: 'bottom',
             font: { size: 11, weight: 'normal' }
           }

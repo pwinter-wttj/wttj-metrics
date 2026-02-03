@@ -5,8 +5,8 @@ RSpec.describe WttjMetrics::Services::PresenterMapper do
     let(:presenter_class) { WttjMetrics::Presenters::FlowMetricPresenter }
     let(:metrics) do
       [
-        { metric: 'avg_cycle_time_days', value: 10.5 },
-        { metric: 'avg_lead_time_days', value: 24.3 }
+        { metric: 'median_cycle_time_days', value: 10.5 },
+        { metric: 'median_lead_time_days', value: 24.3 }
       ]
     end
 
@@ -21,8 +21,8 @@ RSpec.describe WttjMetrics::Services::PresenterMapper do
     it 'passes each metric to the presenter constructor' do
       result = described_class.map_to_presenters(metrics, presenter_class)
 
-      expect(result.first.name).to eq('avg_cycle_time_days')
-      expect(result.last.name).to eq('avg_lead_time_days')
+      expect(result.first.name).to eq('median_cycle_time_days')
+      expect(result.last.name).to eq('median_lead_time_days')
     end
 
     context 'when metrics is nil' do
@@ -198,8 +198,8 @@ RSpec.describe WttjMetrics::Services::PresenterMapper do
     context 'when used in report generation pipeline' do
       let(:flow_metrics) do
         [
-          { metric: 'avg_cycle_time_days', value: 10.0 },
-          { metric: 'avg_lead_time_days', value: 24.4 },
+          { metric: 'median_cycle_time_days', value: 10.0 },
+          { metric: 'median_lead_time_days', value: 24.4 },
           { metric: 'weekly_throughput', value: 90 },
           { metric: 'current_wip', value: 137 }
         ]

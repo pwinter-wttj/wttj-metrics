@@ -24,7 +24,7 @@ RSpec.describe WttjMetrics::Metrics::Github::PrSizeCalculator do
   end
 
   describe '#to_rows' do
-    it 'calculates average size metrics' do
+    it 'calculates median size metrics' do
       rows = calculator.to_rows
 
       # Avg Additions: (100 + 200) / 2 = 150
@@ -32,10 +32,10 @@ RSpec.describe WttjMetrics::Metrics::Github::PrSizeCalculator do
       # Avg Files: (5 + 2) / 2 = 3.5
       # Avg Commits: (3 + 1) / 2 = 2
 
-      additions_row = rows.find { |r| r[2] == 'avg_additions_per_pr' }
-      deletions_row = rows.find { |r| r[2] == 'avg_deletions_per_pr' }
-      files_row = rows.find { |r| r[2] == 'avg_changed_files_per_pr' }
-      commits_row = rows.find { |r| r[2] == 'avg_commits_per_pr' }
+      additions_row = rows.find { |r| r[2] == 'median_additions_per_pr' }
+      deletions_row = rows.find { |r| r[2] == 'median_deletions_per_pr' }
+      files_row = rows.find { |r| r[2] == 'median_changed_files_per_pr' }
+      commits_row = rows.find { |r| r[2] == 'median_commits_per_pr' }
 
       expect(additions_row[3]).to eq(150.0)
       expect(deletions_row[3]).to eq(30.0)

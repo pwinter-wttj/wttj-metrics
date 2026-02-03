@@ -6,6 +6,8 @@ module WttjMetrics
       # Calculates timeseries metrics from Linear issues
       # Follows composition pattern similar to GitHub implementation
       class TimeseriesCalculator < Base
+        include Helpers::StatisticsHelper
+
         def to_rows
           process_issues
           collect_rows
@@ -84,7 +86,7 @@ module WttjMetrics
         def calculate_mttr(resolution_times)
           return 0 if resolution_times.empty?
 
-          (resolution_times.sum / resolution_times.size).round(1)
+          safe_median(resolution_times, precision: 1)
         end
       end
     end

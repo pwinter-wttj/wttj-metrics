@@ -14,8 +14,8 @@ test.describe('GitHub Team Metrics', () => {
         const headers = [
             'Team',
             'Merged PRs',
-            'Avg Time to Merge (d)',
-            'Avg Reviews',
+            'Median Time to Merge (d)',
+            'Median Reviews',
             'Unreviewed Rate (%)',
             'Merge Rate (%)',
             'CI Success (%)'
@@ -26,15 +26,15 @@ test.describe('GitHub Team Metrics', () => {
         }
     });
 
-    test('shows global averages in table headers', async ({ page }) => {
+    test('shows global medians in table headers', async ({ page }) => {
         const table = page.locator('#teamMetricsTable');
 
         // Check for subtitles in headers
-        await expect(table.locator('th', { hasText: 'Avg Time to Merge' }).locator('span')).toContainText('Avg:');
-        await expect(table.locator('th', { hasText: 'Avg Reviews' }).locator('span')).toContainText('Avg:');
-        await expect(table.locator('th', { hasText: 'Unreviewed Rate' }).locator('span')).toContainText('Avg:');
-        await expect(table.locator('th', { hasText: 'Merge Rate' }).locator('span')).toContainText('Avg:');
-        await expect(table.locator('th', { hasText: 'CI Success' }).locator('span')).toContainText('Avg:');
+        await expect(table.locator('th', { hasText: 'Median Time to Merge' }).locator('span')).toContainText('Median:');
+        await expect(table.locator('th', { hasText: 'Median Reviews' }).locator('span')).toContainText('Median:');
+        await expect(table.locator('th', { hasText: 'Unreviewed Rate' }).locator('span')).toContainText('Median:');
+        await expect(table.locator('th', { hasText: 'Merge Rate' }).locator('span')).toContainText('Median:');
+        await expect(table.locator('th', { hasText: 'CI Success' }).locator('span')).toContainText('Median:');
     });
 
     test('allows filtering teams', async ({ page }) => {

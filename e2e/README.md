@@ -149,9 +149,9 @@ npx playwright test --update-snapshots
 - WIP metric display
 
 **Key Metrics:**
-1. Avg Cycle Time
-2. Avg Lead Time
-3. Avg Review Time (NEW)
+1. Median Cycle Time
+2. Median Lead Time
+3. Median Review Time (NEW)
 4. Weekly Throughput
 5. Current WIP
 6. Completion Rate

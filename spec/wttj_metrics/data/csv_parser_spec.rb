@@ -86,6 +86,36 @@ RSpec.describe WttjMetrics::Data::CsvParser do
       parser = described_class.new(temp_csv.path)
       expect(parser.timeseries_for('unknown_metric', since: '2024-12-01')).to eq([])
     end
+
+    context 'when timeseries category exists' do
+      let(:csv_with_timeseries) { Tempfile.new(['timeseries', '.csv']) }
+
+      before do
+        CSV.open(csv_with_timeseries.path, 'w') do |csv|
+          csv << %w[date category metric value]
+          csv << %w[2024-12-01 timeseries throughput 10]
+          csv << %w[2024-12-02 timeseries throughput 15]
+          csv << %w[2024-11-30 timeseries throughput 99]
+          csv << %w[2024-12-02 timeseries other_metric 123]
+        end
+      end
+
+      after do
+        csv_with_timeseries.close
+        csv_with_timeseries.unlink
+      end
+
+      it 'filters by metric name and since date' do
+        parser = described_class.new(csv_with_timeseries.path)
+
+        series = parser.timeseries_for('throughput', since: '2024-12-01')
+
+        aggregate_failures do
+          expect(series.map { |m| m[:date] }).to eq(%w[2024-12-01 2024-12-02])
+          expect(series.map { |m| m[:value] }).to eq([10.0, 15.0])
+        end
+      end
+    end
   end
 
   describe 'value parsing' do

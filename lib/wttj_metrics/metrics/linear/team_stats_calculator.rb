@@ -6,14 +6,16 @@ module WttjMetrics
       # Calculates aggregate statistics for team cycles
       # Single Responsibility: Team statistics calculation
       class TeamStatsCalculator
+        include Helpers::StatisticsHelper
+
         COUNTABLE_STATUSES = %w[completed active].freeze
         METRIC_DEFINITIONS = [
-          { key: :avg_velocity, field: :velocity, precision: 0 },
-          { key: :avg_tickets_per_cycle, field: :completed_issues, precision: 0 },
-          { key: :avg_assignees, field: :assignee_count, precision: 0 },
-          { key: :avg_completion_rate, field: :completion_rate, precision: 0 },
-          { key: :avg_tickets_per_day, field: :tickets_per_day, precision: 0 },
-          { key: :avg_scope_change, field: :scope_change, precision: 0 }
+          { key: :median_velocity, field: :velocity, precision: 0 },
+          { key: :median_tickets_per_cycle, field: :completed_issues, precision: 0 },
+          { key: :median_assignees, field: :assignee_count, precision: 0 },
+          { key: :median_completion_rate, field: :completion_rate, precision: 0 },
+          { key: :median_tickets_per_day, field: :tickets_per_day, precision: 0 },
+          { key: :median_scope_change, field: :scope_change, precision: 0 }
         ].freeze
 
         def initialize(cycles_by_team)
@@ -29,7 +31,7 @@ module WttjMetrics
         def calculate_team_stats(cycles)
           active_cycles = select_active_cycles(cycles)
 
-          base_stats(cycles, active_cycles).merge(calculated_averages(active_cycles))
+          base_stats(cycles, active_cycles).merge(calculated_medians(active_cycles))
         end
 
         def base_stats(cycles, active_cycles)
@@ -40,9 +42,9 @@ module WttjMetrics
           }
         end
 
-        def calculated_averages(active_cycles)
+        def calculated_medians(active_cycles)
           METRIC_DEFINITIONS.to_h do |metric|
-            [metric[:key], average(active_cycles, metric[:field], precision: metric[:precision])]
+            [metric[:key], median(active_cycles, metric[:field], precision: metric[:precision])]
           end
         end
 
@@ -58,11 +60,9 @@ module WttjMetrics
           (cycle[:total_issues] || 0).positive?
         end
 
-        def average(cycles, field, precision: 1)
-          return 0 if cycles.empty?
-
-          total = sum(cycles, field)
-          (total.to_f / cycles.size).round(precision)
+        def median(cycles, field, precision: 1)
+          values = cycles.map { |cycle| field_value(cycle, field).to_f }
+          safe_median(values, precision: precision)
         end
 
         def sum(cycles, field)

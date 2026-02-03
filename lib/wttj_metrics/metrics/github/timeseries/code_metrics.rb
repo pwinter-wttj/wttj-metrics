@@ -5,31 +5,23 @@ module WttjMetrics
     module Github
       module Timeseries
         class CodeMetrics
+          include Helpers::StatisticsHelper
+
           def initialize
-            @total_additions = 0
-            @total_deletions = 0
-            @pr_count = 0
+            @additions = []
+            @deletions = []
           end
 
           def record(pull_request)
-            @pr_count += 1
-            @total_additions += pull_request[:additions] || pull_request['additions'] || 0
-            @total_deletions += pull_request[:deletions] || pull_request['deletions'] || 0
+            @additions << (pull_request[:additions] || pull_request['additions'] || 0).to_f
+            @deletions << (pull_request[:deletions] || pull_request['deletions'] || 0).to_f
           end
 
           def metrics
             {
-              avg_additions_per_pr: average(@total_additions),
-              avg_deletions_per_pr: average(@total_deletions)
+              median_additions_per_pr: safe_median(@additions, precision: 2),
+              median_deletions_per_pr: safe_median(@deletions, precision: 2)
             }
-          end
-
-          private
-
-          def average(total)
-            return 0.0 if @pr_count.zero?
-
-            (total.to_f / @pr_count).round(2)
           end
         end
       end

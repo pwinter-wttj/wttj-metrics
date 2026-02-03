@@ -16,7 +16,7 @@ module WttjMetrics
           closed_bugs: :closed,
           bugs_created_last_30d: :created_last_30d,
           bugs_closed_last_30d: :closed_last_30d,
-          avg_bug_resolution_days: :avg_resolution_days,
+          median_bug_resolution_days: :median_resolution_days,
           bug_ratio: :bug_ratio
         }.freeze
 
@@ -41,7 +41,7 @@ module WttjMetrics
             closed: closed_bugs_count,
             created_last_30d: bugs_created_last_30_days,
             closed_last_30d: bugs_closed_last_30_days,
-            avg_resolution_days: avg_resolution_days,
+            median_resolution_days: median_resolution_days,
             bug_ratio: bug_ratio,
             by_priority: bugs_by_priority
           }
@@ -112,11 +112,11 @@ module WttjMetrics
           range.cover?(parsed_date)
         end
 
-        def avg_resolution_days
+        def median_resolution_days
           resolution_times = calculate_resolution_times
           return 0 if resolution_times.empty?
 
-          average(resolution_times).round(1)
+          safe_median(resolution_times, precision: 1)
         end
 
         def calculate_resolution_times
@@ -129,10 +129,6 @@ module WttjMetrics
           created = parse_date(bug['createdAt'])
           completed = parse_date(bug['completedAt'])
           (completed - created).to_f
-        end
-
-        def average(numbers)
-          numbers.sum / numbers.size.to_f
         end
 
         def bug_ratio

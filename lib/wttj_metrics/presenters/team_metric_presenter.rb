@@ -6,12 +6,12 @@ module WttjMetrics
     class TeamMetricPresenter < BasePresenter
       TOOLTIPS = {
         'completion_rate' => 'Percentage of issues completed vs total issues.',
-        'avg_blocked_time_hours' => 'Average hours issues spend in blocked state.'
+        'median_blocked_time_hours' => 'Median hours issues spend in blocked state.'
       }.freeze
 
       def label
         name.tr('_', ' ')
-            .gsub('avg ', 'Avg ')
+        .gsub('median ', 'Median ')
             .strip
             .capitalize
       end

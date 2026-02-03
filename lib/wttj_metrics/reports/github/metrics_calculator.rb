@@ -16,6 +16,13 @@ module WttjMetrics
             &.dig(:value) || 0
         end
 
+        def latest_or_nil(metric_name)
+          @metrics_data
+            .select { |m| m[:metric] == metric_name }
+            .max_by { |m| m[:date] }
+            &.dig(:value)
+        end
+
         def history(metric_name)
           @metrics_data
             .select { |m| m[:metric] == metric_name }

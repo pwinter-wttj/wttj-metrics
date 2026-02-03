@@ -7,22 +7,22 @@ module WttjMetrics
       # Single Responsibility: Data formatting and descriptions
       class ExcelFormatter
         METRIC_DESCRIPTIONS = {
-          'avg_cycle_time_days' => 'Average time from work start to completion',
-          'avg_lead_time_days' => 'Average time from creation to completion',
+          'median_cycle_time_days' => 'Median time from work start to completion',
+          'median_lead_time_days' => 'Median time from creation to completion',
           'weekly_throughput' => 'Issues completed in last 7 days',
           'current_wip' => 'Work In Progress count',
           'current_cycle_velocity' => 'Story points completed in current cycle',
-          'cycle_commitment_accuracy' => 'Average percentage of planned work completed',
-          'cycle_carryover_count' => 'Average issues carried over per completed cycle',
+          'cycle_commitment_accuracy' => 'Median percentage of planned work completed',
+          'cycle_carryover_count' => 'Median issues carried over per completed cycle',
           'completion_rate' => 'Percentage of issues completed',
-          'avg_blocked_time_hours' => 'Average time issues are blocked',
-          'avg_backlog_age_days' => 'Average age of backlog items',
+          'median_blocked_time_hours' => 'Median time issues are blocked',
+          'median_backlog_age_days' => 'Median age of backlog items',
           'total_bugs' => 'Total bugs in workspace',
           'open_bugs' => 'Bugs not yet completed',
           'closed_bugs' => 'Bugs completed or canceled',
           'bugs_created_last_30d' => 'New bugs in last 30 days',
           'bugs_closed_last_30d' => 'Bugs resolved in last 30 days',
-          'avg_bug_resolution_days' => 'Average time to resolve a bug',
+          'median_bug_resolution_days' => 'Median time to resolve a bug',
           'bug_ratio' => 'Percentage of issues that are bugs'
         }.freeze
 
@@ -73,7 +73,7 @@ module WttjMetrics
 
         def bug_unit(metric_name)
           case metric_name
-          when 'avg_bug_resolution_days' then ' days'
+          when 'median_bug_resolution_days' then ' days'
           when 'bug_ratio' then '%'
           else ''
           end

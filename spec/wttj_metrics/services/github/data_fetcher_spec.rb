@@ -15,7 +15,7 @@ RSpec.describe WttjMetrics::Services::Github::DataFetcher do
        'repository' => { 'name' => 'repo' } }]
   end
   let(:releases) { [{ 'name' => 'v1.0', 'publishedAt' => Date.today.iso8601 }] }
-  let(:teams) { [{ 'name' => 'Team A' }] }
+  let(:teams) { { 'Team A' => ['user-a'] } }
 
   before do
     allow(WttjMetrics::Sources::Github::Client).to receive(:new).and_return(client)
@@ -27,10 +27,12 @@ RSpec.describe WttjMetrics::Services::Github::DataFetcher do
       fetch_teams: teams
     )
     ENV['GITHUB_ORG'] = 'WTTJ'
+    ENV['GITHUB_TOKEN'] = 'token'
   end
 
   after do
     ENV.delete('GITHUB_ORG')
+    ENV.delete('GITHUB_TOKEN')
   end
 
   describe '#call' do
@@ -157,8 +159,31 @@ RSpec.describe WttjMetrics::Services::Github::DataFetcher do
     context 'when fetching teams' do
       it 'fetches teams' do
         result = fetcher.call
-        expect(result[:teams]).to eq(teams)
-        expect(client).to have_received(:fetch_teams).with('WTTJ')
+        aggregate_failures do
+          expect(result[:teams]).to eq(teams)
+          expect(client).to have_received(:fetch_teams).with('WTTJ')
+          expect(cache).to have_received(:write).with('github_teams_WTTJ', teams)
+        end
+      end
+
+      context 'when GITHUB_TOKEN is missing but cached teams exist' do
+        let(:cached_teams) { { 'Cached Team' => ['user-cached'] } }
+
+        before do
+          ENV.delete('GITHUB_TOKEN')
+          allow(cache).to receive(:read).with('github_prs_WTTJ', max_age_hours: 24).and_return(prs)
+          allow(cache).to receive(:read).with('github_teams_WTTJ', max_age_hours: 24).and_return(nil)
+          allow(cache).to receive(:read).with('github_teams_WTTJ', max_age_hours: 87_600).and_return(cached_teams)
+        end
+
+        it 'uses cached teams without fetching from client' do
+          result = fetcher.call
+
+          aggregate_failures do
+            expect(result[:teams]).to eq(cached_teams)
+            expect(client).not_to have_received(:fetch_teams)
+          end
+        end
       end
 
       it 'handles errors when fetching teams' do

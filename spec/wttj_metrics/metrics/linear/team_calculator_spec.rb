@@ -58,9 +58,9 @@ RSpec.describe WttjMetrics::Metrics::Linear::TeamCalculator do
         ]
       end
 
-      it 'calculates average blocked time in hours' do
+      it 'calculates median blocked time in hours' do
         # 4 hours blocked
-        expect(result[:avg_blocked_time_hours]).to eq(4.0)
+        expect(result[:median_blocked_time_hours]).to eq(4.0)
       end
     end
 
@@ -70,7 +70,7 @@ RSpec.describe WttjMetrics::Metrics::Linear::TeamCalculator do
 
       it 'returns zero for all metrics', :aggregate_failures do
         expect(result[:completion_rate]).to eq(0)
-        expect(result[:avg_blocked_time_hours]).to eq(0)
+        expect(result[:median_blocked_time_hours]).to eq(0)
       end
     end
 
@@ -104,7 +104,7 @@ RSpec.describe WttjMetrics::Metrics::Linear::TeamCalculator do
     it 'includes all team metrics', :aggregate_failures do
       metric_names = rows.map { |r| r[2] }
 
-      expect(metric_names).to include('completion_rate', 'avg_blocked_time_hours')
+      expect(metric_names).to include('completion_rate', 'median_blocked_time_hours')
     end
   end
 end

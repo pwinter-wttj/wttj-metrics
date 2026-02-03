@@ -44,11 +44,18 @@ module WttjMetrics
       end
 
       def calculate_value(items, suffix, _strategy)
-        sum = items.sum { |m| m[:value].to_f }
+        values = items.map { |m| m[:value].to_f }
+        return median(values) if average_metric?(suffix)
 
-        return sum / items.size if average_metric?(suffix)
+        values.sum
+      end
 
-        sum
+      def median(values)
+        sorted = values.sort
+        mid = sorted.length / 2
+        return sorted[mid] if sorted.length.odd?
+
+        (sorted[mid - 1] + sorted[mid]) / 2.0
       end
 
       def average_metric?(suffix)

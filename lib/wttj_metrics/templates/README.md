@@ -32,8 +32,8 @@ The main HTML template for the comprehensive metrics report. This template gener
 4. **Team Comparison Section**
    - Team Metrics table with:
      - Team names
-     - Average completion rates (with progress bars)
-     - Average scope changes
+     - Median completion rates (with progress bars)
+     - Median scope changes
      - Total cycles per team
    - Color-coded performance indicators
 
@@ -41,7 +41,7 @@ The main HTML template for the comprehensive metrics report. This template gener
    - Bug Status Overview with metric cards:
      - Total bugs
      - Open bugs
-     - MTTR (Mean Time To Resolution)
+  - MTTR (Median Time To Resolution)
      - Resolution rate
    - Bug Status Distribution chart (pie chart)
    - Bugs by Priority chart (bar chart)

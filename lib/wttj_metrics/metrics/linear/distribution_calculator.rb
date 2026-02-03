@@ -8,6 +8,7 @@ module WttjMetrics
       # Calculates distribution metrics (status, priority, type, size, assignee)
       class DistributionCalculator < Base
         include Helpers::Linear::IssueHelper
+        include Helpers::StatisticsHelper
 
         def calculate
           {
@@ -28,11 +29,11 @@ module WttjMetrics
 
         # Also expose backlog age as an issue characteristic
         def backlog_metrics
-          { avg_backlog_age_days: avg_backlog_age }
+          { median_backlog_age_days: median_backlog_age }
         end
 
         def backlog_rows
-          [[today.to_s, 'issues', 'avg_backlog_age_days', avg_backlog_age]]
+          [[today.to_s, 'issues', 'median_backlog_age_days', median_backlog_age]]
         end
 
         private
@@ -219,19 +220,16 @@ module WttjMetrics
           issues.select { |issue| issue.dig('state', 'type') == state_type }
         end
 
-        def avg_backlog_age
+        def median_backlog_age
           backlog_issues = filter_issues_by_state('backlog')
           return 0 if backlog_issues.empty?
 
-          total_days = calculate_total_age(backlog_issues)
-          (total_days / backlog_issues.size).round(2)
-        end
-
-        def calculate_total_age(issues_list)
-          issues_list.sum do |issue|
+          ages = backlog_issues.map do |issue|
             created = parse_datetime(issue['createdAt'])
             (today.to_datetime - created).to_f
           end
+
+          safe_median(ages, precision: 2)
         end
       end
     end

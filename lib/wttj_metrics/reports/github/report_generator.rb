@@ -12,18 +12,18 @@ module WttjMetrics
         include Helpers::FormattingHelper
 
         METRIC_MAPPING = {
-          avg_time_to_merge: 'avg_time_to_merge_days',
+          median_time_to_merge: 'median_time_to_merge_days',
           total_merged: 'total_merged_prs',
-          avg_reviews: 'avg_reviews_per_pr',
-          avg_comments: 'avg_comments_per_pr',
-          avg_time_to_first_review: 'avg_time_to_first_review_days',
-          avg_additions: 'avg_additions_per_pr',
-          avg_deletions: 'avg_deletions_per_pr',
-          avg_changed_files: 'avg_changed_files_per_pr',
-          avg_commits: 'avg_commits_per_pr',
+          median_reviews: 'median_reviews_per_pr',
+          median_comments: 'median_comments_per_pr',
+          median_time_to_first_review: 'median_time_to_first_review_days',
+          median_additions: 'median_additions_per_pr',
+          median_deletions: 'median_deletions_per_pr',
+          median_changed_files: 'median_changed_files_per_pr',
+          median_commits: 'median_commits_per_pr',
           merge_rate: 'merge_rate',
-          avg_time_to_approval: 'avg_time_to_approval_days',
-          avg_rework_cycles: 'avg_rework_cycles',
+          median_time_to_approval: 'median_time_to_approval_days',
+          median_rework_cycles: 'median_rework_cycles',
           unreviewed_pr_rate: 'unreviewed_pr_rate',
           ci_success_rate: 'ci_success_rate',
           deploy_frequency: 'deploy_frequency_weekly',
@@ -33,20 +33,20 @@ module WttjMetrics
 
         DAILY_METRIC_MAPPING = {
           merged: 'merged', closed: 'closed', open: 'open',
-          avg_time_to_merge: 'avg_time_to_merge_hours',
-          avg_reviews: 'avg_reviews_per_pr',
-          avg_comments: 'avg_comments_per_pr',
-          avg_additions: 'avg_additions_per_pr',
-          avg_deletions: 'avg_deletions_per_pr',
-          avg_time_to_first_review: 'avg_time_to_first_review_days',
+          median_time_to_merge: 'median_time_to_merge_hours',
+          median_reviews: 'median_reviews_per_pr',
+          median_comments: 'median_comments_per_pr',
+          median_additions: 'median_additions_per_pr',
+          median_deletions: 'median_deletions_per_pr',
+          median_time_to_first_review: 'median_time_to_first_review_days',
           merge_rate: 'merge_rate',
-          avg_time_to_approval: 'avg_time_to_approval_days',
-          avg_rework_cycles: 'avg_rework_cycles',
+          median_time_to_approval: 'median_time_to_approval_days',
+          median_rework_cycles: 'median_rework_cycles',
           unreviewed_pr_rate: 'unreviewed_pr_rate',
           ci_success_rate: 'ci_success_rate',
           deploy_frequency: 'releases_count',
           hotfix_rate: 'hotfix_rate',
-          time_to_green: 'avg_time_to_green_hours'
+          time_to_green: 'median_time_to_green_hours'
         }.freeze
 
         attr_reader :data, :days_to_show, :today, :start_date, :end_date
@@ -133,19 +133,31 @@ module WttjMetrics
           @percentile_data ||= PercentileDataBuilder.new(@parser, cutoff_date: cutoff_date).all_percentile_data
         end
 
+        def team_metrics_warning
+          team_metrics
+          @team_metrics_warning
+        end
+
         def team_metrics
           @team_metrics ||= begin
             teams = TeamService.new(@parser, @teams_config).resolve_teams
 
-            teams.each_with_object({}) do |team_name, hash|
-              category = "github:#{team_name}"
-              calculator = MetricsCalculator.new(metrics_data(category))
+            if teams.empty?
+              @team_metrics_warning = if @teams_config
+                                       'No GitHub team metrics found in the CSV. Re-run `collect` with a `GITHUB_TOKEN` that can read org teams (or after teams have been cached) to populate per-team GitHub metrics.'
+                                     end
+              {}
+            else
+              teams.each_with_object({}) do |team_name, hash|
+                category = "github:#{team_name}"
+                calculator = MetricsCalculator.new(metrics_data(category))
 
-              hash[team_name] = {
-                metrics: METRIC_MAPPING.transform_values { |name| calculator.latest(name) },
-                history: METRIC_MAPPING.transform_values { |name| calculator.history(name) },
-                daily_breakdown: daily_breakdown_for(team_name)
-              }
+                hash[team_name] = {
+                  metrics: METRIC_MAPPING.transform_values { |name| calculator.latest_or_nil(name) },
+                  history: METRIC_MAPPING.transform_values { |name| calculator.history(name) },
+                  daily_breakdown: daily_breakdown_for(team_name)
+                }
+              end
             end
           end
         end

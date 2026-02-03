@@ -29,9 +29,9 @@ RSpec.describe WttjMetrics::Presenters::BasePresenter do
   describe '#value' do
     subject(:value) { presenter.value }
 
-    it 'returns the value as an integer' do
+    it 'returns a formatted numeric value' do
       # Exercise & Verify
-      expect(value).to eq(42)
+      expect(value).to eq(42.7)
     end
   end
 
@@ -50,11 +50,11 @@ RSpec.describe WttjMetrics::Presenters::BasePresenter do
 
     context 'with multiple underscores' do
       # Setup
-      let(:metric) { { metric: 'avg_cycle_time', value: 10 } }
+      let(:metric) { { metric: 'median_cycle_time', value: 10 } }
 
       it 'replaces all underscores with spaces' do
         # Exercise & Verify
-        expect(label).to eq('Avg cycle time')
+        expect(label).to eq('Median cycle time')
       end
     end
   end
@@ -64,7 +64,7 @@ RSpec.describe WttjMetrics::Presenters::BasePresenter do
 
     it 'returns the value with unit' do
       # Exercise & Verify
-      expect(display_value).to eq('42')
+      expect(display_value).to eq('42.7')
     end
   end
 
@@ -75,8 +75,8 @@ RSpec.describe WttjMetrics::Presenters::BasePresenter do
       # Exercise & Verify
       expect(hash).to include(
         label: 'Test metric',
-        value: 42,
-        display_value: '42',
+        value: 42.7,
+        display_value: '42.7',
         tooltip: '',
         unit: ''
       )

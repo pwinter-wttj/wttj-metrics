@@ -55,9 +55,9 @@ RSpec.describe WttjMetrics::Metrics::Linear::BugCalculator do
         expect(result[:bug_ratio]).to be_within(0.1).of(66.7)
       end
 
-      it 'calculates average resolution days' do
+      it 'calculates median resolution days' do
         # 5 days for the closed bug
-        expect(result[:avg_resolution_days]).to eq(5.0)
+        expect(result[:median_resolution_days]).to eq(5.0)
       end
 
       it 'groups open bugs by priority' do
@@ -123,7 +123,7 @@ RSpec.describe WttjMetrics::Metrics::Linear::BugCalculator do
       end
 
       it 'excludes from resolution time calculation' do
-        expect(result[:avg_resolution_days]).to eq(0)
+        expect(result[:median_resolution_days]).to eq(0)
       end
     end
 
@@ -169,6 +169,7 @@ RSpec.describe WttjMetrics::Metrics::Linear::BugCalculator do
         'total_bugs',
         'open_bugs',
         'closed_bugs',
+        'median_bug_resolution_days',
         'bug_ratio'
       )
     end

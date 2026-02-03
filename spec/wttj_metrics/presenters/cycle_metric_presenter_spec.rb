@@ -6,7 +6,7 @@ RSpec.describe WttjMetrics::Presenters::CycleMetricPresenter do
   subject(:presenter) { described_class.new(metric) }
 
   let(:metric) { { metric: metric_name, value: metric_value } }
-  let(:metric_name) { 'avg_cycle_velocity' }
+  let(:metric_name) { 'median_cycle_velocity' }
   let(:metric_value) { 42 }
 
   it_behaves_like 'a presenter'
@@ -14,11 +14,11 @@ RSpec.describe WttjMetrics::Presenters::CycleMetricPresenter do
   describe '#label' do
     subject(:label) { presenter.label }
 
-    context 'with avg_cycle_velocity' do
-      let(:metric_name) { 'avg_cycle_velocity' }
+    context 'with median_cycle_velocity' do
+      let(:metric_name) { 'median_cycle_velocity' }
 
-      it 'removes avg and cycle prefixes' do
-        expect(label).to eq('Velocity')
+      it 'uses Median prefix' do
+        expect(label).to eq('Median velocity')
       end
     end
 
@@ -42,11 +42,11 @@ RSpec.describe WttjMetrics::Presenters::CycleMetricPresenter do
   describe '#tooltip' do
     subject(:tooltip) { presenter.tooltip }
 
-    context 'with avg_cycle_velocity' do
-      let(:metric_name) { 'avg_cycle_velocity' }
+    context 'with median_cycle_velocity' do
+      let(:metric_name) { 'median_cycle_velocity' }
 
       it 'returns the tooltip' do
-        expect(tooltip).to eq('Average story points completed per cycle across all completed cycles.')
+        expect(tooltip).to eq('Median story points completed per cycle across completed cycles (excluding zero-velocity cycles).')
       end
     end
 
@@ -54,7 +54,7 @@ RSpec.describe WttjMetrics::Presenters::CycleMetricPresenter do
       let(:metric_name) { 'cycle_commitment_accuracy' }
 
       it 'returns the tooltip' do
-        expect(tooltip).to eq('Average percentage of planned work completed across all completed cycles.')
+        expect(tooltip).to eq('Median percentage of planned work completed across all completed cycles.')
       end
     end
 
@@ -62,7 +62,7 @@ RSpec.describe WttjMetrics::Presenters::CycleMetricPresenter do
       let(:metric_name) { 'cycle_carryover_count' }
 
       it 'returns the tooltip' do
-        expect(tooltip).to eq('Average number of issues carried over per completed cycle.')
+        expect(tooltip).to eq('Median number of issues carried over per completed cycle.')
       end
     end
 
@@ -87,7 +87,7 @@ RSpec.describe WttjMetrics::Presenters::CycleMetricPresenter do
     end
 
     context 'with velocity metric' do
-      let(:metric_name) { 'avg_cycle_velocity' }
+      let(:metric_name) { 'median_cycle_velocity' }
 
       it 'returns empty string' do
         expect(unit).to eq('')

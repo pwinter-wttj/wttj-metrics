@@ -54,14 +54,14 @@ RSpec.describe WttjMetrics::Metrics::Linear::TeamStatsCalculator do
         expect(result.keys).to contain_exactly('Team A', 'Team B')
       end
 
-      it 'calculates Team A averages correctly', :aggregate_failures do
+      it 'calculates Team A medians correctly', :aggregate_failures do
         team_a = result['Team A']
 
         expect(team_a[:total_cycles]).to eq(2)
         expect(team_a[:cycles_with_data]).to eq(2)
-        expect(team_a[:avg_velocity]).to eq(25)
-        expect(team_a[:avg_tickets_per_cycle]).to eq(9)
-        expect(team_a[:avg_assignees]).to eq(4)
+        expect(team_a[:median_velocity]).to eq(25)
+        expect(team_a[:median_tickets_per_cycle]).to eq(9)
+        expect(team_a[:median_assignees]).to eq(4)
         expect(team_a[:total_carryover]).to eq(4)
       end
 
@@ -69,7 +69,7 @@ RSpec.describe WttjMetrics::Metrics::Linear::TeamStatsCalculator do
         team_b = result['Team B']
 
         expect(team_b[:total_cycles]).to eq(1)
-        expect(team_b[:avg_velocity]).to eq(15.0)
+        expect(team_b[:median_velocity]).to eq(15.0)
       end
     end
 
@@ -93,7 +93,7 @@ RSpec.describe WttjMetrics::Metrics::Linear::TeamStatsCalculator do
         }
       end
 
-      it 'excludes cycles with zero issues from averages' do
+      it 'excludes cycles with zero issues from medians' do
         expect(result['Team A'][:cycles_with_data]).to eq(1)
       end
     end

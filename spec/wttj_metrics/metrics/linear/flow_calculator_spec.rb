@@ -32,21 +32,21 @@ RSpec.describe WttjMetrics::Metrics::Linear::FlowCalculator do
       it 'calculates all flow metrics' do
         # Exercise & Verify
         expect(result).to include(
-          :avg_cycle_time_days,
-          :avg_lead_time_days,
+          :median_cycle_time_days,
+          :median_lead_time_days,
           :weekly_throughput,
           :current_wip
         )
       end
 
-      it 'calculates cycle time as average time from start to completion' do
+      it 'calculates cycle time as median time from start to completion' do
         # Issue 1: 2 days, Issue 2: ~1.83 days, Average: ~1.92
-        expect(result[:avg_cycle_time_days]).to be_within(0.1).of(1.92)
+        expect(result[:median_cycle_time_days]).to be_within(0.1).of(1.92)
       end
 
-      it 'calculates lead time as average time from creation to completion' do
+      it 'calculates lead time as median time from creation to completion' do
         # Issue 1: 3 days, Issue 2: 2 days, Average: 2.5
-        expect(result[:avg_lead_time_days]).to be_within(0.1).of(2.5)
+        expect(result[:median_lead_time_days]).to be_within(0.1).of(2.5)
       end
 
       it 'counts weekly throughput' do
@@ -83,11 +83,11 @@ RSpec.describe WttjMetrics::Metrics::Linear::FlowCalculator do
       end
 
       it 'returns zero cycle time when no startedAt' do
-        expect(result[:avg_cycle_time_days]).to eq(0)
+        expect(result[:median_cycle_time_days]).to eq(0)
       end
 
       it 'still calculates lead time' do
-        expect(result[:avg_lead_time_days]).to be > 0
+        expect(result[:median_lead_time_days]).to be > 0
       end
     end
 
@@ -109,7 +109,7 @@ RSpec.describe WttjMetrics::Metrics::Linear::FlowCalculator do
       end
 
       it 'includes old issues in cycle time calculation' do
-        expect(result[:avg_cycle_time_days]).to be > 0
+        expect(result[:median_cycle_time_days]).to be > 0
       end
     end
 
@@ -118,8 +118,8 @@ RSpec.describe WttjMetrics::Metrics::Linear::FlowCalculator do
       let(:issues) { [] }
 
       it 'returns zero for all metrics', :aggregate_failures do
-        expect(result[:avg_cycle_time_days]).to eq(0)
-        expect(result[:avg_lead_time_days]).to eq(0)
+        expect(result[:median_cycle_time_days]).to eq(0)
+        expect(result[:median_lead_time_days]).to eq(0)
         expect(result[:weekly_throughput]).to eq(0)
         expect(result[:current_wip]).to eq(0)
       end
@@ -140,8 +140,8 @@ RSpec.describe WttjMetrics::Metrics::Linear::FlowCalculator do
       metric_names = rows.map { |r| r[2] }
 
       expect(metric_names).to include(
-        'avg_cycle_time_days',
-        'avg_lead_time_days',
+        'median_cycle_time_days',
+        'median_lead_time_days',
         'weekly_throughput',
         'current_wip'
       )

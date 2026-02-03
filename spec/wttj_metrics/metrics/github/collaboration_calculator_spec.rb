@@ -33,13 +33,13 @@ RSpec.describe WttjMetrics::Metrics::Github::CollaborationCalculator do
         stats = calculator.calculate
 
         # Reviews: 2 + 0 = 2. Count = 2. Avg = 1.0
-        expect(stats[:avg_reviews_per_pr]).to eq(1.0)
+        expect(stats[:median_reviews_per_pr]).to eq(1.0)
 
         # Comments: 3 + 1 = 4. Count = 2. Avg = 2.0
-        expect(stats[:avg_comments_per_pr]).to eq(2.0)
+        expect(stats[:median_comments_per_pr]).to eq(2.0)
 
         # Rework: 1 CHANGES_REQUESTED. Count = 2. Avg = 0.5
-        expect(stats[:avg_rework_cycles]).to eq(0.5)
+        expect(stats[:median_rework_cycles]).to eq(0.5)
 
         # Unreviewed: 1 PR with 0 reviews. Count = 2. Rate = 50%
         expect(stats[:unreviewed_pr_rate]).to eq(50.0)

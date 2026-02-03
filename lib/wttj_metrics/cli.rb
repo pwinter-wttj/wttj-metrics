@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'date'
+require 'csv'
 require 'fileutils'
 require 'thor'
 
@@ -72,15 +73,18 @@ module WttjMetrics
     option :all_teams, type: :boolean, default: false, desc: 'Include all teams (no filter)'
     option :excel, aliases: '-x', type: :boolean, default: false, desc: 'Also generate Excel spreadsheet'
     option :excel_path, type: :string, default: 'report/report.xlsx', desc: 'Excel output file path'
-    option :sources, aliases: '-s', type: :array, default: ['linear'],
-                     desc: 'Data sources to include in filename resolution (linear, github)'
+    option :sources, aliases: '-s', type: :array, default: [],
+                     desc: 'Data sources to report on (linear, github). If omitted, inferred from CSV.'
     option :start_date, type: :string, desc: 'Start date (YYYY-MM-DD), overrides --days'
     option :end_date, type: :string, desc: 'End date (YYYY-MM-DD), defaults to today'
     def report(csv_file = 'tmp/metrics.csv')
       if csv_file == 'tmp/metrics.csv'
-        options[:sources].each do |source|
+        sources = resolve_sources_for_default_csv(options[:sources])
+        sources.each do |source|
           opts = options.dup
           input_csv = "tmp/#{source}_metrics.csv"
+
+          opts[:source] = source
 
           opts[:output] = "report/#{source}_report.html" if opts[:output] == 'report/report.html'
           opts[:excel_path] = "report/#{source}_report.xlsx" if opts[:excel_path] == 'report/report.xlsx'
@@ -88,8 +92,60 @@ module WttjMetrics
           Services::ReportService.new(input_csv, Values::ReportOptions.new(opts), logger).call
         end
       else
-        opts = Values::ReportOptions.new(options)
-        Services::ReportService.new(csv_file, opts, logger).call
+        raise Error, "CSV file not found: #{csv_file}" unless File.exist?(csv_file)
+
+        sources = options[:sources]
+        sources = infer_sources_from_csv(csv_file) if sources.nil? || sources.empty?
+
+        if sources.length > 1
+          sources.each do |source|
+            opts = options.dup
+            opts[:source] = source
+
+            opts[:output] = "report/#{source}_report.html" if opts[:output] == 'report/report.html'
+            opts[:excel_path] = "report/#{source}_report.xlsx" if opts[:excel_path] == 'report/report.xlsx'
+
+            Services::ReportService.new(csv_file, Values::ReportOptions.new(opts), logger).call
+          end
+        else
+          opts = options.dup
+          opts[:source] = sources.first || 'linear'
+
+          Services::ReportService.new(csv_file, Values::ReportOptions.new(opts), logger).call
+        end
+      end
+    end
+
+    no_commands do
+      def resolve_sources_for_default_csv(requested_sources)
+        return requested_sources unless requested_sources.nil? || requested_sources.empty?
+
+        %w[linear github].select { |source| File.exist?("tmp/#{source}_metrics.csv") }
+                       .then { |sources| sources.empty? ? ['linear'] : sources }
+      end
+
+      def infer_sources_from_csv(csv_file)
+        has_github = false
+        has_linear = false
+
+        CSV.foreach(csv_file, headers: true) do |row|
+          category = row['category']
+          next unless category
+
+          if category.start_with?('github')
+            has_github = true
+          else
+            has_linear = true
+          end
+
+          break if has_github && has_linear
+        end
+
+        sources = []
+        sources << 'linear' if has_linear
+        sources << 'github' if has_github
+
+        sources.empty? ? ['linear'] : sources
       end
     end
 

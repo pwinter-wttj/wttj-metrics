@@ -17,26 +17,26 @@ module WttjMetrics
 
         # Time to first review percentiles (in days)
         def time_to_first_review_percentiles
-          values = daily_values_for('avg_time_to_first_review_days')
+          values = daily_values_for('median_time_to_first_review_days')
           build_percentile_data(values, 'Time to First Review', 'days')
         end
 
         # Time to merge percentiles (convert hours to days)
         def time_to_merge_percentiles
-          values = daily_values_for('avg_time_to_merge_hours').map { |v| v / 24.0 }
+          values = daily_values_for('median_time_to_merge_hours').map { |v| v / 24.0 }
           build_percentile_data(values, 'Time to Merge', 'days')
         end
 
         # Time to approval percentiles (in days)
         def time_to_approval_percentiles
-          values = daily_values_for('avg_time_to_approval_days')
+          values = daily_values_for('median_time_to_approval_days')
           build_percentile_data(values, 'Time to Approval', 'days')
         end
 
         # PR size percentiles (additions + deletions)
         def pr_size_percentiles
-          additions = daily_values_for('avg_additions_per_pr')
-          deletions = daily_values_for('avg_deletions_per_pr')
+          additions = daily_values_for('median_additions_per_pr')
+          deletions = daily_values_for('median_deletions_per_pr')
           sizes = additions.zip(deletions).map { |addition, deletion| (addition || 0) + (deletion || 0) }
 
           {
@@ -51,19 +51,19 @@ module WttjMetrics
 
         # Rework cycles percentiles
         def rework_cycles_percentiles
-          values = daily_values_for('avg_rework_cycles')
+          values = daily_values_for('median_rework_cycles')
           build_percentile_data(values, 'Rework Cycles', 'cycles')
         end
 
         # Reviews per PR percentiles
         def reviews_per_pr_percentiles
-          values = daily_values_for('avg_reviews_per_pr')
+          values = daily_values_for('median_reviews_per_pr')
           build_percentile_data(values, 'Reviews per PR', 'reviews')
         end
 
         # CI time to green percentiles (in hours)
         def time_to_green_percentiles
-          values = daily_values_for('avg_time_to_green_hours')
+          values = daily_values_for('median_time_to_green_hours')
           build_percentile_data(values, 'Time to Green', 'hours')
         end
 
@@ -113,9 +113,9 @@ module WttjMetrics
 
           {
             labels: teams_data.keys.sort,
-            time_to_merge: format_team_metric(teams_data, 'avg_time_to_merge_hours', divisor: 24),
-            time_to_review: format_team_metric(teams_data, 'avg_time_to_first_review_days'),
-            reviews_per_pr: format_team_metric(teams_data, 'avg_reviews_per_pr'),
+            time_to_merge: format_team_metric(teams_data, 'median_time_to_merge_hours', divisor: 24),
+            time_to_review: format_team_metric(teams_data, 'median_time_to_first_review_days'),
+            reviews_per_pr: format_team_metric(teams_data, 'median_reviews_per_pr'),
             unreviewed_rate: format_team_metric(teams_data, 'unreviewed_pr_rate')
           }
         end
@@ -175,8 +175,8 @@ module WttjMetrics
         def format_team_metric(teams_data, metric_name, divisor: 1)
           teams_data.keys.sort.map do |team|
             values = teams_data[team][metric_name] || []
-            avg = safe_average(values) / divisor
-            { team: team, value: avg.round(2) }
+            median = safe_median(values) / divisor
+            { team: team, value: median.round(2) }
           end
         end
 

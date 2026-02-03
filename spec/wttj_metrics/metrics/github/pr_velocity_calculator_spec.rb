@@ -40,10 +40,10 @@ RSpec.describe WttjMetrics::Metrics::Github::PrVelocityCalculator do
   end
 
   describe '#calculate' do
-    it 'calculates average time to merge' do
+    it 'calculates median time to merge' do
       result = calculator.calculate
       # (1 + 2) / 2 = 1.5 days
-      expect(result[:avg_time_to_merge_days]).to eq(1.5)
+      expect(result[:median_time_to_merge_days]).to eq(1.5)
     end
 
     it 'calculates total merged PRs' do
@@ -51,12 +51,12 @@ RSpec.describe WttjMetrics::Metrics::Github::PrVelocityCalculator do
       expect(result[:total_merged]).to eq(2)
     end
 
-    it 'calculates average time to first review' do
+    it 'calculates median time to first review' do
       result = calculator.calculate
       # PR 1: 2 hours = 2/24 = 0.0833 days
       # PR 2: 6 hours = 6/24 = 0.25 days
       # Avg: (0.0833 + 0.25) / 2 = 0.1666... -> 0.1667
-      expect(result[:avg_time_to_first_review_days]).to eq(0.1667)
+      expect(result[:median_time_to_first_review_days]).to eq(0.1667)
     end
 
     it 'calculates merge_rate' do
@@ -69,7 +69,7 @@ RSpec.describe WttjMetrics::Metrics::Github::PrVelocityCalculator do
       expect(result[:merge_rate]).to eq(66.67)
     end
 
-    it 'calculates avg_time_to_approval_days' do
+    it 'calculates median_time_to_approval_days' do
       # Add approval data
       pull_requests[0][:reviews][:nodes] << { state: 'APPROVED', createdAt: '2025-01-01T14:00:00Z' } # 4 hours
       pull_requests[1][:reviews][:nodes] << { state: 'APPROVED', createdAt: '2025-01-04T10:00:00Z' } # 24 hours (1 day)
@@ -78,7 +78,7 @@ RSpec.describe WttjMetrics::Metrics::Github::PrVelocityCalculator do
       # PR 1: 4 hours = 0.1667 days
       # PR 2: 24 hours = 1.0 days
       # Avg: (0.1667 + 1.0) / 2 = 0.58335 -> 0.5833 (if 0.166666...)
-      expect(result[:avg_time_to_approval_days]).to eq(0.5833)
+      expect(result[:median_time_to_approval_days]).to eq(0.5833)
     end
   end
 end

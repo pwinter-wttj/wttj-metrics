@@ -470,21 +470,21 @@
       <div class="metrics-grid">
 
         <div class="metric-card">
-          <span class="tooltip">Average time from when work starts on an issue until it's completed.</span>
+          <span class="tooltip">Median time from when work starts on an issue until it's completed.</span>
           <div class="metric-value">9 days</div>
-          <div class="metric-label">Avg cycle time</div>
+          <div class="metric-label">Median cycle time</div>
         </div>
 
         <div class="metric-card">
-          <span class="tooltip">Average time from issue creation to completion.</span>
+          <span class="tooltip">Median time from issue creation to completion.</span>
           <div class="metric-value">24 days</div>
-          <div class="metric-label">Avg lead time</div>
+          <div class="metric-label">Median lead time</div>
         </div>
 
         <div class="metric-card">
-          <span class="tooltip">Average time spent in review states (code review, testing, validation).</span>
+          <span class="tooltip">Median time spent in review states (code review, testing, validation).</span>
           <div class="metric-value">5 days</div>
-          <div class="metric-label">Avg review time</div>
+          <div class="metric-label">Median review time</div>
         </div>
 
         <div class="metric-card">
@@ -501,19 +501,19 @@
 
 
         <div class="metric-card">
-          <span class="tooltip">Average story points completed per cycle across all completed cycles.</span>
+          <span class="tooltip">Median story points completed per cycle across all completed cycles.</span>
           <div class="metric-value">2</div>
-          <div class="metric-label">Velocity</div>
+          <div class="metric-label">Median velocity</div>
         </div>
 
         <div class="metric-card">
-          <span class="tooltip">Average percentage of planned work completed across all completed cycles.</span>
+          <span class="tooltip">Median percentage of planned work completed across all completed cycles.</span>
           <div class="metric-value">53%</div>
           <div class="metric-label">Commitment accuracy</div>
         </div>
 
         <div class="metric-card">
-          <span class="tooltip">Average number of issues carried over per completed cycle.</span>
+          <span class="tooltip">Median number of issues carried over per completed cycle.</span>
           <div class="metric-value">13</div>
           <div class="metric-label">Carryover count</div>
         </div>
@@ -526,9 +526,9 @@
         </div>
 
         <div class="metric-card">
-          <span class="tooltip">Average hours issues spend in blocked state.</span>
+          <span class="tooltip">Median hours issues spend in blocked state.</span>
           <div class="metric-value">0h</div>
-          <div class="metric-label">Avg blocked time hours</div>
+          <div class="metric-label">Median blocked time hours</div>
         </div>
 
       </div>
@@ -580,9 +580,9 @@
             </div>
 
             <div class="metric-card">
-              <span class="tooltip">Average time to resolve a bug.</span>
+              <span class="tooltip">Median time to resolve a bug.</span>
               <div class="metric-value">24 days</div>
-              <div class="metric-label">Avg resolution days</div>
+              <div class="metric-label">Median resolution days</div>
             </div>
 
             <div class="metric-card">
@@ -654,7 +654,7 @@
                 <th class="sortable has-tooltip" onclick="sortBugStatsTable(1, 'number')">Total Created<span class="th-tooltip">Total bugs ever created for this team</span></th>
                 <th class="sortable has-tooltip" onclick="sortBugStatsTable(2, 'number')">Closed<span class="th-tooltip">Bugs that have been resolved</span></th>
                 <th class="sortable has-tooltip" onclick="sortBugStatsTable(3, 'number')">Open<span class="th-tooltip">Bugs currently open</span></th>
-                <th class="sortable has-tooltip" onclick="sortBugStatsTable(4, 'number')">MTTR<span class="th-tooltip">Mean Time To Resolve (avg days to fix bugs)</span></th>
+                <th class="sortable has-tooltip" onclick="sortBugStatsTable(4, 'number')">MTTR<span class="th-tooltip">Median Time To Resolve (median days to fix bugs)</span></th>
                 <th class="sortable has-tooltip" onclick="sortBugStatsTable(5, 'number')">Resolution Rate<span class="th-tooltip">Percentage of bugs closed</span></th>
               </tr>
             </thead>
@@ -842,13 +842,13 @@
             <tr>
               <th>Team</th>
               <th class="has-tooltip">Cycles (with data)<span class="th-tooltip">Number of cycles with actual work data vs total cycles</span></th>
-              <th class="has-tooltip">Avg Velocity<span class="th-tooltip">Average story points completed per cycle</span></th>
-              <th class="has-tooltip">Avg Tickets/Cycle<span class="th-tooltip">Average number of tickets completed per cycle</span></th>
-              <th class="has-tooltip">Avg Assignees<span class="th-tooltip">Average number of team members working per cycle</span></th>
-              <th class="has-tooltip">Avg Tickets/Day<span class="th-tooltip">Average tickets completed per day during cycles</span></th>
-              <th class="has-tooltip">Avg Completion<span class="th-tooltip">Average percentage of planned work completed</span></th>
+              <th class="has-tooltip">Median Velocity<span class="th-tooltip">Median story points completed per cycle</span></th>
+              <th class="has-tooltip">Median Tickets/Cycle<span class="th-tooltip">Median number of tickets completed per cycle</span></th>
+              <th class="has-tooltip">Median Assignees<span class="th-tooltip">Median number of team members working per cycle</span></th>
+              <th class="has-tooltip">Median Tickets/Day<span class="th-tooltip">Median tickets completed per day during cycles</span></th>
+              <th class="has-tooltip">Median Completion<span class="th-tooltip">Median percentage of planned work completed</span></th>
               <th class="has-tooltip">Total Carryover<span class="th-tooltip">Total issues carried over from previous cycles</span></th>
-              <th class="has-tooltip">Avg Scope Change<span class="th-tooltip">Average change in sprint scope during cycles</span></th>
+              <th class="has-tooltip">Median Scope Change<span class="th-tooltip">Median change in sprint scope during cycles</span></th>
             </tr>
           </thead>
           <tbody>

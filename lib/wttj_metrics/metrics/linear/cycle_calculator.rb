@@ -14,7 +14,7 @@ module WttjMetrics
 
         def calculate
           {
-            avg_cycle_velocity: avg_cycle_velocity,
+            median_cycle_velocity: median_cycle_velocity,
             cycle_commitment_accuracy: cycle_commitment_accuracy,
             cycle_carryover_count: cycle_carryover_count
           }
@@ -32,25 +32,28 @@ module WttjMetrics
 
         attr_reader :cycles, :today
 
-        def avg_cycle_velocity
+        def median_cycle_velocity
           return 0 if completed_cycles.empty?
 
-          total_velocity = completed_cycles.sum { |cycle| completed_points(cycle) }
-          (total_velocity.to_f / completed_cycles.size).round(1)
+          velocities = completed_cycles.map { |cycle| completed_points(cycle).to_f }
+                                     .select(&:positive?)
+          return 0 if velocities.empty?
+
+          safe_median(velocities, precision: 1)
         end
 
         def cycle_commitment_accuracy
           return 0 if completed_cycles.empty?
 
-          total_accuracy = completed_cycles.sum { |cycle| cycle_completion_percentage(cycle) }
-          (total_accuracy / completed_cycles.size).round(2)
+          accuracies = completed_cycles.map { |cycle| cycle_completion_percentage(cycle).to_f }
+          safe_median(accuracies, precision: 2)
         end
 
         def cycle_carryover_count
           return 0 if completed_cycles.empty?
 
-          total_carryover = completed_cycles.sum { |cycle| carryover_count_for(cycle) }
-          (total_carryover.to_f / completed_cycles.size).round(1)
+          carryovers = completed_cycles.map { |cycle| carryover_count_for(cycle).to_f }
+          safe_median(carryovers, precision: 1)
         end
 
         def completed_cycles
